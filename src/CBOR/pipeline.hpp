@@ -27,14 +27,22 @@ enum PipelineCBOR{
         STEP_END
 
 };
-    
+    //FONCTION de test pour envoyer un message minimal 
     void sendMinimalCBORMessage();
-    void pipelineSwitchCBOR(const char* dataMessage);
-    void repeatMachine();
+
+    //FONCTION qui est appelé depuis le main.cpp pour envoyer un message CBOR au serveur distant
     void sendMessageCBOR();
+
+    //FONCTION pour appeler la pipeline
+    void pipelineSwitchCBOR(const char* dataMessage);
+
+    //FONCTION pour executer la machine d'état 
+    void repeatMachine();
+
+    //FONCTION pour gérer le temps d'execution des étapes
     boolean chrono(uint16_t time);
 
-    //Function de la pipeline 
+    //Les fonctions dans la pipeline
     void STEP_INIT_CBOR_FUNCTION(const char* dataMessage);
     void STEP_VERIFIER_CONNEXION_FUNCTION(); 
     void STEP_OPEN_CONNEXION_FUNCTION();
