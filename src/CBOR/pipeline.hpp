@@ -34,9 +34,11 @@ enum PipelineCBOR{
     void sendMessageCBOR();
     boolean chrono(uint16_t time);
     void STEP_INIT_CBOR_FUNCTION(const char* dataMessage);
+    void STEP_VERIFIER_CONNEXION_FUNCTION(); 
 
     extern std::vector<uint8_t> cborDataPipeline;
     extern ATCommandTask* taskCBOR_CASEND;
     extern PipelineCBOR currentStepCBOR;
-    // extern ATCommandTask* currentTaskCBOR;
+    extern MachineEtat machineCBOR; 
+    extern ATCommandTask* currentTaskCBOR;
 #endif

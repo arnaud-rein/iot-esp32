@@ -184,7 +184,7 @@ ATCommandTask taskCBOR_OPEN_CONNEXION("AT+CAOPEN=0,0,\"TCP\"," + (String) PINGGY
 String command;
 ATCommandTask* taskCBOR_CASEND = nullptr;
 ATCommandTask taskCBOR_CLOSE("AT+CACLOSE=0", "OK", 15, 100);
-ATCommandTask taskCBOR_CEREG("AT+CEREG?", "+CEREG: 0,5", 15, 100);
+// ATCommandTask taskCBOR_CEREG("AT+CEREG?", "+CEREG: 0,5", 15, 100);
 boolean endCBOR = true;
 ATCommandTask* currentTaskCBOR = nullptr;
 
@@ -212,19 +212,7 @@ void pipelineSwitchCBOR(const char* dataMessage){
 
 
         case STEP_VERIFIER_CONNEXION:
-            if(chrono(100)) {
-                Serial.println("[STEP_VERIFIER_CONNEXION] init");
-                if(!taskCBOR_CEREG.isFinished){
-                    machineCBOR.updateATState(taskCBOR_CEREG); 
-                    currentTaskCBOR = &taskCBOR_CEREG;
-                    PERIODE_CBOR = millis();
-                }else{
-                    Serial.println("[STEP_VERIFIER_CONNEXION] success");
-                    currentStepCBOR = STEP_OPEN_CONNEXION;
-                    PERIODE_CBOR = millis();
-                }
-
-            }
+            STEP_VERIFIER_CONNEXION_FUNCTION();
             break;
 
         

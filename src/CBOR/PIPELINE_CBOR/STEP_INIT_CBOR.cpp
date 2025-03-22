@@ -1,4 +1,4 @@
-#include "pipeline.hpp"
+#include "./../pipeline.hpp"
 
 void STEP_INIT_CBOR_FUNCTION(const char* dataMessage){
     if(chrono(100)) {

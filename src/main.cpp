@@ -3,7 +3,8 @@
 #include "SIM7080G_SERIAL.hpp"
 #include "SIM7080G_CATM1.hpp"
 #include "machineEtat.hpp"
-#include "pipeline.hpp"
+// #include "pipeline.hpp"
+#include "./CBOR/pipeline.hpp"
 
 
 // unsigned long periodX;
