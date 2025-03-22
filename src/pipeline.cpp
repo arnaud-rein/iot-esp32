@@ -178,39 +178,57 @@ PipelineCBOR currentStepCBOR = STEP_INIT_CBOR;
 unsigned long periodCBOR;
 std::vector<uint8_t> cborDataPipeline;
 MachineEtat machineCBOR; 
-ATCommandTask taskCBOR_OPEN_CONNEXION("AT+CAOPEN=0,0,\"TCP\",\"rnpzl-2a01-cb0d-8049-29ce-a8bf-83af-ebdc-1b69.a.free.pinggy.link\",37781", "+CAOPEN: 0,0", 15, 8000);
-ATCommandTask taskCBOR_CASEND("AT+CASEND=0," + String(cborDataPipeline.size()), "OK", 15, 3000);
+ATCommandTask taskCBOR_OPEN_CONNEXION("AT+CAOPEN=0,0,\"TCP\"," + (String) PINGGY_LINK + "," + (String) PINGGY_PORT, "OK", 15, 8000);
+
+// Convertir la taille en String et concaténer correctement :
+String command;
+ATCommandTask* taskCBOR_CASEND = nullptr;
 ATCommandTask taskCBOR_CLOSE("AT+CACLOSE=0", "OK", 15, 100);
 boolean endCBOR = true;
+ATCommandTask* currentTaskCBOR = nullptr;
 
+void repeatMachine(){
+     // Mettre un garde-fou
+     if (currentTaskCBOR) {
+        machineCBOR.updateATState(*currentTaskCBOR);
+    }
+}
 
-void pipelineSwitchCBOR(){
-    // periodCBOR = millis();
-    // Serial.print("dans le switch et voici current state cbor : " + (String) STEP_INIT_CBOR);
+void pipelineSwitchCBOR(const char* dataMessage){
+
+    
     switch(currentStepCBOR){
 
         case STEP_INIT_CBOR:
-            Serial.println("avant millis dans case 0" + (String) periodCBOR);
-            Serial.println((String) (millis() - periodCBOR)  );
-            Serial.println((String) ((millis() - periodCBOR) > 3000) );
-            if((millis() - periodCBOR) > 3000) {
-                Serial.println("----------------------------------success");
-                Serial.println("[STEP_INIT_CBOR]---------> ");
-                const char* message = "coucou serveur";
+            if((millis() - periodCBOR) > 100) {
+                Serial.println("[STEP_INIT_CBOR] ");
+                const char* message = dataMessage;
                 json j = message;
 
                 // 2. Convertir en CBOR
                 cborDataPipeline= json::to_cbor(j);
+                Serial.println(cborDataPipeline.size());
+                // Convertir la taille en String et concaténer correctement :
+                String newCommand = String("AT+CASEND=0,") + String(cborDataPipeline.size());
+                Serial.println(newCommand); 
+
+                        // Recréer l'objet taskCBOR_CASEND
+                if (taskCBOR_CASEND != nullptr) {
+                    delete taskCBOR_CASEND;  // Si l'objet existait déjà, le supprimer pour éviter une fuite mémoire
+                }
+                taskCBOR_CASEND = new ATCommandTask(newCommand, ">", 15, 3000);
+
                 currentStepCBOR = STEP_OPEN_CONNEXION;
                 periodCBOR = millis();
             }
             break;
 
         case STEP_OPEN_CONNEXION:
-            if((millis() - periodCBOR) > 5000) {
+            if((millis() - periodCBOR) > 100) {
                 Serial.println("[STEP_OPEN_CONNEXION] ");
                 if(!taskCBOR_OPEN_CONNEXION.isFinished){
                     machineCBOR.updateATState(taskCBOR_OPEN_CONNEXION); 
+                    currentTaskCBOR = &taskCBOR_OPEN_CONNEXION;
                     periodCBOR = millis();
                 }else{
                     currentStepCBOR = STEP_DEFINE_BYTE;
@@ -221,10 +239,10 @@ void pipelineSwitchCBOR(){
             break;
         
         case STEP_DEFINE_BYTE:
-            if((millis() - periodCBOR) > 100) {
+            if((millis() - periodCBOR) > 1000) {
                 Serial.println("[STEP_DEFINE_BYTE] ");
-                if(!taskCBOR_CASEND.isFinished){
-                    machineCBOR.updateATState(taskCBOR_CASEND); 
+                if(!taskCBOR_CASEND->isFinished){
+                    machineCBOR.updateATState(*taskCBOR_CASEND); 
                     periodCBOR = millis();
                 }else{
                     currentStepCBOR = STEP_WRITE;
@@ -269,8 +287,19 @@ void pipelineSwitchCBOR(){
             
             break;
 
-
-        
-
     }
+}
+
+unsigned long periodX = millis();
+
+
+void sendMessageCBOR(){
+    if((millis() - periodX) > 500){
+        if(endCBOR){
+            pipelineSwitchCBOR("TEST TEST TEST \n oui oui oui ::: \n end end end");
+        }
+        // sendMinimalCBORMessage();
+        periodX = millis();
+    }
+
 }

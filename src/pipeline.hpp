@@ -28,5 +28,7 @@ enum PipelineCBOR{
 };
     
     void sendMinimalCBORMessage();
-    void pipelineSwitchCBOR();
+    void pipelineSwitchCBOR(const char* dataMessage);
+    void repeatMachine();
+    void sendMessageCBOR();
 #endif

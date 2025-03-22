@@ -43,6 +43,9 @@ void MachineEtat::updateATState(ATCommandTask &task) {
                     Serial.println("[MATCH] Réponse complète détectée !");
                     task.state = PARSING;
                     responseFound = true;  // Marquer la réponse comme trouvée
+                    task.isFinished = true;  // ⬅️ Marquer la tâche comme terminée
+                    task.state = END;
+                    Serial.println("[SUCCESS] Réponse valide pour " + String(task.command));
                     break;  // Sortir immédiatement de la boucle while
                 }
             }
@@ -56,17 +59,17 @@ void MachineEtat::updateATState(ATCommandTask &task) {
     
             
 
-        case PARSING:
-            Serial.println("[PARSING] Réponse reçue : " + task.responseBuffer);
-            if (task.responseBuffer.indexOf(task.expectedResponse) >= 0) {
-                Serial.println("[SUCCESS] Réponse valide pour " + String(task.command));
-                task.isFinished = true;  // ⬅️ Marquer la tâche comme terminée
-                task.state = IDLE;
-            } else {
-                Serial.println("[FAIL] Réponse incorrecte pour " + String(task.command));
-                task.state = RETRY;
-            }
-            break;
+        // case PARSING:
+        //     Serial.println("[PARSING] Réponse reçue : " + task.responseBuffer);
+        //     if (task.responseBuffer.indexOf(task.expectedResponse) >= 0) {
+        //         Serial.println("[SUCCESS] Réponse valide pour " + String(task.command));
+        //         task.isFinished = true;  // ⬅️ Marquer la tâche comme terminée
+        //         task.state = IDLE;
+        //     } else {
+        //         Serial.println("[FAIL] Réponse incorrecte pour " + String(task.command));
+        //         task.state = RETRY;
+        //     }
+        //     break;
 
         case RETRY:
             if (task.retryCount < task.MAX_RETRIES) {
@@ -83,6 +86,10 @@ void MachineEtat::updateATState(ATCommandTask &task) {
         case ERROR:
             Serial.println("[ERROR] Problème avec " + String(task.command));
             task.state = IDLE;
+            break;
+
+        case END:
+            
             break;
     }
 }

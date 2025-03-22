@@ -6,14 +6,12 @@
 #include "pipeline.hpp"
 
 
-unsigned long periodX;
+// unsigned long periodX;
 
 void everyX(){
-  if((millis() - periodX) > 6000){
-    // pipelineSwitchCBOR();
-    sendMinimalCBORMessage();
-    periodX = millis();
-  }
+  repeatMachine(); 
+  sendMessageCBOR();
+  
 }
 
 void setup() {
@@ -23,7 +21,7 @@ void setup() {
   reboot_SIM7080G();
   Serial.println("Around the World"); // CTRL + ALT + S
   setup_CATM1();
-  periodX = millis();
+  // periodX = millis();
 }
 
 void loop() {
