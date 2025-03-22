@@ -10,7 +10,6 @@
 // unsigned long periodX;
 
 void everyX(){
-  repeatMachine(); 
   sendMessageCBOR();
   
 }

@@ -50,6 +50,7 @@ unsigned long periodX = millis();
 
 //FONCION appelé depuis le main.cpp pour envoyer un message au serveur node.js distant 
 void sendMessageCBOR(){
+    repeatMachine(); 
     if((millis() - periodX) > 500){
         if(endCBOR){
             pipelineSwitchCBOR("TEST TEST TEST \n oui oui oui ::: \n end end end");
