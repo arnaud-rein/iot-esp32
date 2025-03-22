@@ -175,15 +175,12 @@ void sendMinimalCBORMessage() { // http://127.0.0.1:5500/documentation/index.htm
 
 // -----------Utilisation Machine d'état ----------------------->
 PipelineCBOR currentStepCBOR = STEP_INIT_CBOR;
-// unsigned long PERIODE_CBOR;
 std::vector<uint8_t> cborDataPipeline;
 MachineEtat machineCBOR; 
-ATCommandTask taskCBOR_OPEN_CONNEXION("AT+CAOPEN=0,0,\"TCP\"," + (String) PINGGY_LINK + "," + (String) PINGGY_PORT, "OK", 15, 8000);
-
 // Convertir la taille en String et concaténer correctement :
 String command;
 ATCommandTask* taskCBOR_CASEND = nullptr;
-ATCommandTask taskCBOR_CLOSE("AT+CACLOSE=0", "OK", 15, 100);
+
 // ATCommandTask taskCBOR_CEREG("AT+CEREG?", "+CEREG: 0,5", 15, 100);
 boolean endCBOR = true;
 ATCommandTask* currentTaskCBOR = nullptr;
@@ -209,82 +206,28 @@ void pipelineSwitchCBOR(const char* dataMessage){
             STEP_INIT_CBOR_FUNCTION(dataMessage);
             break;
 
-
-
         case STEP_VERIFIER_CONNEXION:
             STEP_VERIFIER_CONNEXION_FUNCTION();
             break;
 
-        
-
         case STEP_OPEN_CONNEXION:
-            if(chrono(100)) {
-                Serial.println("[STEP_OPEN_CONNEXION] init");
-                if(!taskCBOR_OPEN_CONNEXION.isFinished){
-                    machineCBOR.updateATState(taskCBOR_OPEN_CONNEXION); 
-                    currentTaskCBOR = &taskCBOR_OPEN_CONNEXION;
-                    PERIODE_CBOR = millis();
-                }else{
-                    Serial.println("[STEP_OPEN_CONNEXION] success");
-                    currentStepCBOR = STEP_DEFINE_BYTE;
-                    PERIODE_CBOR = millis();
-                }
-
-            }
+            STEP_OPEN_CONNEXION_FUNCTION();
             break;
         
         case STEP_DEFINE_BYTE:
-            if(chrono(1000)) {
-                Serial.println("[STEP_DEFINE_BYTE] init");
-                if(!taskCBOR_CASEND->isFinished){
-                    machineCBOR.updateATState(*taskCBOR_CASEND); 
-                    PERIODE_CBOR = millis();
-                }else{
-                    Serial.println("[STEP_DEFINE_BYTE] success");
-                    currentStepCBOR = STEP_WRITE;
-                    PERIODE_CBOR = millis();
-                }
-
-            }
+            STEP_DEFINE_BYTE_FUNCTION();
             break;
 
         case STEP_WRITE:
-             // 5. Envoyer les octets CBOR
-            if(chrono(100)) {
-                Serial.println("[STEP_WRITE] ");
-                for (uint8_t byte : cborDataPipeline) {
-                    Sim7080G.write(byte);
-                }
-
-                currentStepCBOR = STEP_CLOSE_CONNEXION;
-                PERIODE_CBOR = millis();
-            }
-            
+            STEP_WRITE_FUNCTION();            
             break;
 
         case STEP_CLOSE_CONNEXION:
-             
-            if(chrono(100)) {
-                Serial.println("[STEP_CLOSE_CONNEXION] init");
-                if(!taskCBOR_CLOSE.isFinished){
-                    machineCBOR.updateATState(taskCBOR_CLOSE);
-                }else{
-                    Serial.println("[STEP_CLOSE_CONNEXION] success");
-                    currentStepCBOR = STEP_END;
-                }
-                
-            }
-            
+            STEP_CLOSE_CONNEXION_FUNCTION();
             break;
             
         case STEP_END:
-        
-            if(endCBOR) {
-                Serial.println("[STEP_END] ");
-                Serial.println("#######################################################END CBOR############################################");
-                endCBOR = false; 
-            }
-            
+            STEP_END_FUNCTION();
             break;
 
     }
