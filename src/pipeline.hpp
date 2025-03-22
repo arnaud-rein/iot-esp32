@@ -9,7 +9,7 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-enum ProcessStep {
+ enum ProcessStep {
         STEP_INIT,
         STEP_WAIT_SIM,
         STEP_CONFIG_CATM1,
@@ -19,6 +19,7 @@ enum ProcessStep {
 
 enum PipelineCBOR{
         STEP_INIT_CBOR,
+        STEP_VERIFIER_CONNEXION,
         STEP_OPEN_CONNEXION, 
         STEP_DEFINE_BYTE, 
         STEP_WRITE,
@@ -31,4 +32,11 @@ enum PipelineCBOR{
     void pipelineSwitchCBOR(const char* dataMessage);
     void repeatMachine();
     void sendMessageCBOR();
+    boolean chrono(uint16_t time);
+    void STEP_INIT_CBOR_FUNCTION(const char* dataMessage);
+
+    extern std::vector<uint8_t> cborDataPipeline;
+    extern ATCommandTask* taskCBOR_CASEND;
+    extern PipelineCBOR currentStepCBOR;
+    // extern ATCommandTask* currentTaskCBOR;
 #endif
