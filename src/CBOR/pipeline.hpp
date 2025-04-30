@@ -1,7 +1,6 @@
 #ifndef PIPELINE
 #define PIPELINE
 
-
 #include <Arduino.h>
 #include "machineEtat.hpp"
 #include "ARGALI_PINOUT.hpp"
@@ -31,7 +30,7 @@ enum PipelineCBOR{
     void sendMinimalCBORMessage();
 
     //FONCTION qui est appelé depuis le main.cpp pour envoyer un message CBOR au serveur distant
-    void sendMessageCBOR();
+    void sendMessageCBOR(const char* dataMessage);
 
     //FONCTION pour appeler la pipeline
     void pipelineSwitchCBOR(const char* dataMessage);
@@ -51,6 +50,7 @@ enum PipelineCBOR{
     void STEP_CLOSE_CONNEXION_FUNCTION();
     void STEP_END_FUNCTION();
 
+    //DEFINITION DE VARIABLES GLOBALES
     extern std::vector<uint8_t> cborDataPipeline;
     extern ATCommandTask* taskCBOR_CASEND;
     extern PipelineCBOR currentStepCBOR;

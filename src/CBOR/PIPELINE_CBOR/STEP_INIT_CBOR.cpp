@@ -1,6 +1,6 @@
 #include "./../pipeline.hpp"
 
-void STEP_INIT_CBOR_FUNCTION(const char* dataMessage){
+void  STEP_INIT_CBOR_FUNCTION(const char* dataMessage){
     if(chrono(100)) {
         Serial.println("[STEP_INIT_CBOR] ");
         const char* message = dataMessage;

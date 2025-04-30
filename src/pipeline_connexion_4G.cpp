@@ -8,7 +8,7 @@ boolean test = true;
 ProcessStep currentStep = STEP_INIT;
 
 // Création de deux tâches AT indépendantes
-ATCommandTask task1("AT+CAOPEN=0,0,\"TCP\",\"rnwaa-2a01-cb0d-8049-29ce-a8bf-83af-ebdc-1b69.a.free.pinggy.link\",35555", "OK", 15, 15000);
+ATCommandTask task1("AT+CAOPEN=0,0,\"TCP\",\"rnuzd-92-184-123-240.a.free.pinggy.link\",44499", "OK", 15, 15000);
 // ATCommandTask task2("AT+COPS?", "+COPS:", 3, 3000);
 unsigned long period1;
 void switchPipeline(){ //#machineEtat //http://127.0.0.1:5500/documentation/index.html#machineEtat

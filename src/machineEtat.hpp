@@ -5,6 +5,7 @@
 #include <SIM7080G_SERIAL.hpp>
 #include "ARGALI_PINOUT.hpp"
 
+
 // Définition des états de la machine d'état
 enum ATState {
     IDLE,
