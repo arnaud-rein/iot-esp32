@@ -5,6 +5,7 @@
 #include <SIM7080G_SERIAL.hpp>
 #include "ARGALI_PINOUT.hpp"
 
+
 // Définition des états de la machine d'état
 enum ATState {
     IDLE,
@@ -12,7 +13,8 @@ enum ATState {
     WAITING_RESPONSE,
     PARSING,
     RETRY,
-    ERROR
+    ERROR, 
+    END
 };
 
 // Structure pour gérer une tâche AT
@@ -27,7 +29,6 @@ struct ATCommandTask {
     const unsigned long TIMEOUT;
     bool isFinished;  // ⬅️ Ajout pour bloquer la réexécution
     String result; 
-
     ATCommandTask(String cmd, String expected, int maxRetries, unsigned long timeout);
 };
 
