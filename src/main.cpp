@@ -60,9 +60,12 @@ void everyX(){
     Serial.println(Send_AT("AT+CGNSPWR=1", 1000));
     if (!gnssPowerOn.isFinished) {
       machine2.updateATState(gnssPowerOn);
+      Send_AT("AT+CGNSMOD=1,1,1,1,1");
     } else {
+      
       Serial.println("[INFO] GNSS activé ou erreur atteinte.");
       Serial.println("-----------------GNSSING--------------"); 
+      Serial.println(Send_AT("AT+CGNSMOD?"));
       Serial.println(Send_AT("AT+CGNSPWR?", 500));      // Vérifie état GNSS
       String response = Send_AT("AT+CGNSINF", 2000);
       Serial.println(response);
