@@ -9,7 +9,11 @@
 #include "./GNSS/DisplayLatLng.hpp"
 #include <EEPROM.h>
 
-#define EEPROM_SIZE 64  // 
+#define EEPROM_SIZE 256  // 
+
+bool afficherDepuisMemoire = false;
+bool* ptrAfficherMemoire = &afficherDepuisMemoire;
+
 
 
 unsigned long periodA; 
@@ -50,7 +54,7 @@ void everyX(){
   // sendMessageCBOR("Test du refactor");
   // sendMessageCBOR("DEUXIEME TACHE");
   if((millis() - periodA) > 3000){
-    // DisplayLatLngInfo();
+    DisplayLatLngInfo(&afficherDepuisMemoire);
     periodA = millis(); 
   }
 }
@@ -63,7 +67,7 @@ void setup() {
   Serial.println("Around the World"); // CTRL + ALT + S
   // setup_CATM1();
   periodA = millis();
-  // initGnssCongif();
+  initGnssCongif();
   if (!EEPROM.begin(EEPROM_SIZE)) {
     Serial.println("Erreur d'initialisation de l'EEPROM !");
     return;
