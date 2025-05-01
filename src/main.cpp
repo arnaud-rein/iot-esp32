@@ -10,7 +10,9 @@
 #include <EEPROM.h>
 
 #define EEPROM_SIZE 256  // 
+ATCommandTask gnssPowerOn("AT+CGNSPWR=1", "OK", 3, 2000); // Commande d’activation GNSS
 
+MachineEtat machine2; // Instance de la machine d’état
 bool afficherDepuisMemoire = false;
 bool* ptrAfficherMemoire = &afficherDepuisMemoire;
 
@@ -54,7 +56,19 @@ void everyX(){
   // sendMessageCBOR("Test du refactor");
   // sendMessageCBOR("DEUXIEME TACHE");
   if((millis() - periodA) > 3000){
-    DisplayLatLngInfo(&afficherDepuisMemoire);
+    // DisplayLatLngInfo(&afficherDepuisMemoire);
+    Serial.println(Send_AT("AT+CGNSPWR=1", 1000));
+    if (!gnssPowerOn.isFinished) {
+      machine2.updateATState(gnssPowerOn);
+    } else {
+      Serial.println("[INFO] GNSS activé ou erreur atteinte.");
+      Serial.println("-----------------GNSSING--------------"); 
+      Serial.println(Send_AT("AT+CGNSPWR?", 500));      // Vérifie état GNSS
+      String response = Send_AT("AT+CGNSINF", 2000);
+      Serial.println(response);
+      Serial.println("-----------------FIN----------------"); 
+      // Tu peux appeler d'autres tâches ici : CGNSINF, etc.
+    }
     periodA = millis(); 
   }
 }
@@ -68,42 +82,42 @@ void setup() {
   // setup_CATM1();
   periodA = millis();
   initGnssCongif();
-  if (!EEPROM.begin(EEPROM_SIZE)) {
-    Serial.println("Erreur d'initialisation de l'EEPROM !");
-    return;
-  }
+  // if (!EEPROM.begin(EEPROM_SIZE)) {
+  //   Serial.println("Erreur d'initialisation de l'EEPROM !");
+  //   return;
+  // }
 
-  Serial.print("Taille EEPROM définie : ");
-  Serial.println(EEPROM_SIZE);
-  Serial.println("Contenu de l'EEPROM :");
+  // Serial.print("Taille EEPROM définie : ");
+  // Serial.println(EEPROM_SIZE);
+  // Serial.println("Contenu de l'EEPROM :");
 
-  // Affiche chaque octet
-  for (int i = 0; i < EEPROM_SIZE; i++) {
-    byte value = EEPROM.read(i);
-    Serial.print("Adresse ");
-    Serial.print(i);
-    Serial.print(" : ");
-    Serial.println(value);
-  }
+  // // Affiche chaque octet
+  // for (int i = 0; i < EEPROM_SIZE; i++) {
+  //   byte value = EEPROM.read(i);
+  //   Serial.print("Adresse ");
+  //   Serial.print(i);
+  //   Serial.print(" : ");
+  //   Serial.println(value);
+  // }
 
-    // Exemple : écrire la valeur 42 à l'adresse 0
-    // EEPROM.write(0, 42);
+  //   // Exemple : écrire la valeur 42 à l'adresse 0
+  //   // EEPROM.write(0, 42);
 
-    // Très important : commit pour sauvegarder dans la flash (ROM)
-    // EEPROM.commit();
+  //   // Très important : commit pour sauvegarder dans la flash (ROM)
+  //   // EEPROM.commit();
   
-    // Lire ce qu'on vient d'écrire
-    int val = EEPROM.read(0);
-    Serial.print("Valeur lue en adresse 0 : ");
-    Serial.println(val);
+  //   // Lire ce qu'on vient d'écrire
+  //   int val = EEPROM.read(0);
+  //   Serial.print("Valeur lue en adresse 0 : ");
+  //   Serial.println(val);
 
-      // 🔸 Écrire "bonjour" en EEPROM à partir de l'adresse 0
-  writeStringToEEPROM(0, "bonjour");
+  //     // 🔸 Écrire "bonjour" en EEPROM à partir de l'adresse 0
+  // writeStringToEEPROM(0, "bonjour");
 
-  // 🔸 Lire ce qui a été écrit
-  String mot = readStringFromEEPROM(0);
-  Serial.print("Mot lu dans l'EEPROM : ");
-  Serial.println(mot);
+  // // 🔸 Lire ce qui a été écrit
+  // String mot = readStringFromEEPROM(0);
+  // Serial.print("Mot lu dans l'EEPROM : ");
+  // Serial.println(mot);
 }
 
 void loop() {
