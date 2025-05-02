@@ -8,10 +8,17 @@ void  STEP_INIT_CBOR_FUNCTION(const char* dataMessage){
 
         // 2. Convertir en CBOR
         cborDataPipeline= json::to_cbor(j);
+        // Serial.print("cborDataPipeline ==> "); 
+        // Serial.println(String(cborDataPipeline));
+        Serial.println("+++++++++++++++++ cborDataPipeline.size() +++++++++++++++++++++++++");
         Serial.println(cborDataPipeline.size());
+        Serial.println("+++++++++++++++++ cborDataPipeline.size() END END+++++++++++++++++++++++++");
         // Convertir la taille en String et concaténer correctement :
+        Send_AT("AT+CACFG?", 500);  // ou mieux : une ATCommandTask propre
         String newCommand = String("AT+CASEND=0,") + String(cborDataPipeline.size());
+        Serial.println("----------------------------------newCommand-----------------------------------");
         Serial.println(newCommand); 
+        Serial.println("----------------------------------newCommand END END-----------------------------------");
 
         // Recréer l'objet taskCBOR_CASEND
         if (taskCBOR_CASEND != nullptr) {
@@ -21,5 +28,6 @@ void  STEP_INIT_CBOR_FUNCTION(const char* dataMessage){
 
         currentStepCBOR = STEP_VERIFIER_CONNEXION;
         PERIODE_CBOR = millis();
+        Serial.println("fin de step init __________________________==================>" +  String(currentStepCBOR));
     }
 }

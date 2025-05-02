@@ -71,3 +71,20 @@ void afficherCoordonneesDepuisEEPROM(bool* afficher) {
     Serial.print("Horodatage : ");
     Serial.println(ts);
 }
+
+
+String getCoordonneesDepuisEEPROM() {
+  EEPROM.begin(EEPROM_SIZE);
+
+  Float_gnss lat = readFloatGnss(ADDR_LATITUDE);
+  Float_gnss lng = readFloatGnss(ADDR_LONGITUDE);
+  String ts = readFixedString(ADDR_TIMESTAMP, 20);
+
+  // Formatage avec précision
+  String latitude = String(lat.ent) + "." + String(lat.dec);
+  String longitude = String(lng.ent) + "." + String(lng.dec);
+ 
+  String result = "{name:'test', position{Latitude: " + latitude + ", Longitude: " + longitude + "}}";
+  // Serial.println("result qui va être convert en CBOR Latitude: " + result);
+  return result;
+}

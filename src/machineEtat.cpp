@@ -7,7 +7,7 @@
 
     // Constructeur de la machine d'état
     MachineEtat::MachineEtat() {}
-
+    unsigned long periodRandom= millis();
     // Implémentation de la machine d’état
     void MachineEtat::updateATState(ATCommandTask &task) {
         bool responseFound = false;  // Ajout d'un booléen
@@ -26,7 +26,7 @@
                 task.state = WAITING_RESPONSE;
                 break;
 
-            case WAITING_RESPONSE:
+            case WAITING_RESPONSE:{
             
             
                 while (Sim7080G.available()) {
@@ -37,17 +37,26 @@
             
                     // Ajouter la ligne au buffer de réponse
                     task.responseBuffer += response + "\n";
-            
-                    // Vérifie si la réponse reçue contient la fin attendue
-                    if (analyzeResponse(task.responseBuffer, task.expectedResponse)) {
-                        Serial.println("[MATCH] Réponse complète détectée !");
-                        task.state = PARSING;
-                        responseFound = true;  // Marquer la réponse comme trouvée
-                        task.isFinished = true;  // ⬅️ Marquer la tâche comme terminée
-                        task.state = END;
-                        Serial.println("[SUCCESS] Réponse valide pour " + String(task.command));
-                        break;  // Sortir immédiatement de la boucle while
-                    }
+                    
+                    
+                        // Serial.println("|||"); 
+                        // Serial.println(""); 
+                        // Serial.print("PWR?   ==>   "); 
+                        // Serial.print(Send_AT("AT+CGNSPWR=0"));
+                        // Serial.print(Send_AT("AT+CGNSPWR?"));
+                        // Serial.println(""); 
+                        // Serial.println("|||"); 
+                        if (analyzeResponse(task.responseBuffer, task.expectedResponse)) {
+                            Serial.println("[MATCH] Réponse complète détectée !");
+                            task.state = PARSING;
+                            responseFound = true;  // Marquer la réponse comme trouvée
+                            task.isFinished = true;  // ⬅️ Marquer la tâche comme terminée
+                            task.state = END;
+                            Serial.println("[SUCCESS] Réponse valide pour " + String(task.command));
+                            break;  // Sortir immédiatement de la boucle while
+                        }
+                       
+                    
                 }
             
                 // Timeout uniquement si aucune réponse n'a été trouvée
@@ -56,6 +65,7 @@
                     task.state = RETRY;
                 }
                 break;
+            }
         
                 
 
@@ -108,6 +118,8 @@
             Serial.println("[INFO] Réponse détectée mais pas complète...");
             return false;
         }
+
+        Serial.println("Dans analyzeResponse {{{{{{{{{{{{{{}}}}}}}}}}}}}}");
 
         return false;
     }

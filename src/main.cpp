@@ -1,24 +1,27 @@
 #include <Arduino.h>
 #include  "SIM7080G_POWER.hpp"
 #include "SIM7080G_SERIAL.hpp"
-#include "SIM7080G_CATM1.hpp"
+// #include "SIM7080G_CATM1.hpp"
 #include "machineEtat.hpp"
 // #include "pipeline.hpp"
 #include "./CBOR/pipeline.hpp"
 #include "./GNSS/SETUP_GNSS.hpp"
 #include "./GNSS/DisplayLatLng.hpp"
 #include <EEPROM.h>
+#include "PIPELINE_GLOBAL.hpp"
+// #include "./SEND/pipeline.hpp"
 
 #define EEPROM_SIZE 256  // 
-ATCommandTask gnssPowerOn("AT+CGNSPWR=1", "OK", 3, 2000); // Commande d’activation GNSS
+// ATCommandTask gnssPowerOn("AT+CGNSPWR=1", "OK", 3, 2000); // Commande d’activation GNSS
 
-MachineEtat machine2; // Instance de la machine d’état
-bool afficherDepuisMemoire = true;
-bool* ptrAfficherMemoire = &afficherDepuisMemoire;
-
+// MachineEtat machine2; // Instance de la machine d’état
+// bool afficherDepuisMemoire = true;
+// bool* ptrAfficherMemoire = &afficherDepuisMemoire;
+bool oneRun = true; 
 
 
 unsigned long periodA; 
+unsigned long periodB; 
 
 
 // 🔹 Fonction pour écrire une String
@@ -55,29 +58,45 @@ String readStringFromEEPROM(int addrOffset) {
 void everyX(){
   // sendMessageCBOR("Test du refactor");
   // sendMessageCBOR("DEUXIEME TACHE");
+  // sendMessageCBOR("test");
+  // Serial.println("dans le every");
   if((millis() - periodA) > 3000){
-    // Serial.println(Send_AT("AT+CGNSPWR=1", 1000));
-    if (!gnssPowerOn.isFinished) {
-      Serial.println("----------------gnssPowerOn------------->");
-      machine2.updateATState(gnssPowerOn);
-      Send_AT("AT+CGNSMOD=1,1,1,1,1", 500);
-      Serial.println(Send_AT("ATI", 500));
-      // Send_AT("AT+CGNSTST=1", 500);  // Active la sortie NMEA sur le port série
-      
-    } else {
-      
-      Serial.println("[INFO] GNSS activé ou erreur atteinte.");
-      Serial.println("-----------------GNSSING--------------"); 
-      Serial.println(Send_AT("AT+CGNSMOD?"));
-      // Serial.println(Send_AT("AT+CGNSTST?"));
-      Serial.println(Send_AT("AT+CGNSPWR?", 500));      // Vérifie état GNSS
-      String response = Send_AT("AT+CGNSINF", 2000);
-      Serial.println(response);
-      DisplayLatLngInfo(&afficherDepuisMemoire);
-      Serial.println("-----------------FIN----------------"); 
-      // Tu peux appeler d'autres tâches ici : CGNSINF, etc.
+    if(oneRun){
+
+      pipelineSwitchGlobal();
     }
+   
     periodA = millis(); 
+  }
+  if(STEP_4G_TEST){
+    if(oneRun){
+      setup_CATM1();
+      oneRun = false; 
+    }
+    
+    if(!oneRun){
+      // Serial.println("++++++++++++++++++++++++++++++++++++++++++++DANS STEP_SEND_4G++++++++++++++++++++++++++++++++++++++");
+      // sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
+      
+      if((millis() - periodB) > 3000){
+        Serial.println("--");
+        Serial.println("--");
+        Serial.println("");
+        Serial.print("[");
+        Serial.print(millis());
+        Serial.print("ms]" );
+        Serial.println("");
+        Serial.println("--");
+        Serial.println("--");
+        periodB = millis();
+        // Serial.print("PWR?   ==>   "); 
+                        // Send_AT("AT+CGNSPWR=0");
+                        // Serial.print(Send_AT("AT+CGNSPWR?"));
+      }
+        // sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
+        
+        sendMessageCBOR("{\"name\":\"Evian\",\"position\":{\"latitude\":666.85,\"longitude\":3.35}}");
+    }
   }
 }
 
@@ -89,44 +108,7 @@ void setup() {
   Serial.println("Around the World"); // CTRL + ALT + S
   // setup_CATM1();
   periodA = millis();
-  initGnssCongif();
-  if (!EEPROM.begin(EEPROM_SIZE)) {
-    Serial.println("Erreur d'initialisation de l'EEPROM !");
-    return;
-  }
-
-  Serial.print("Taille EEPROM définie : ");
-  Serial.println(EEPROM_SIZE);
-  Serial.println("Contenu de l'EEPROM :");
-  
-  // Affiche chaque octet
-  for (int i = 0; i < EEPROM_SIZE; i++) {
-    byte value = EEPROM.read(i);
-    Serial.print("Adresse ");
-    Serial.print(i);
-    Serial.print(" : ");
-    Serial.println(value);
-  }
-  
-  // Exemple : écrire la valeur 42 à l'adresse 0
-    // EEPROM.write(0, 42);
-
-    // Très important : commit pour sauvegarder dans la flash (ROM)
-    // EEPROM.commit();
-    
-    // Lire ce qu'on vient d'écrire
-    int val = EEPROM.read(0);
-    Serial.print("Valeur lue en adresse 0 : ");
-    Serial.println(val);
-
-      // 🔸 Écrire "bonjour" en EEPROM à partir de l'adresse 0
-  writeStringToEEPROM(0, "bonjour");
-  
-  // 🔸 Lire ce qui a été écrit
-  String mot = readStringFromEEPROM(0);
-  Serial.print("Mot lu dans l'EEPROM : ");
-  Serial.println(mot);
-  DisplayLatLngInfo(&afficherDepuisMemoire);
+  periodB = millis(); 
 }
 
 void loop() {

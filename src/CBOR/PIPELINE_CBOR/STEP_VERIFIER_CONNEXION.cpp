@@ -5,7 +5,7 @@ ATCommandTask taskCBOR_CEREG("AT+CEREG?", "+CEREG: 0,5", 15, 100);
 void STEP_VERIFIER_CONNEXION_FUNCTION(){
     
     if(chrono(100)) {
-        Serial.println("[STEP_VERIFIER_CONNEXION] init");
+        Serial.println("[STEP_VERIFIER_CONNEXION] init iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
         if(!taskCBOR_CEREG.isFinished){
             machineCBOR.updateATState(taskCBOR_CEREG); 
             currentTaskCBOR = &taskCBOR_CEREG;

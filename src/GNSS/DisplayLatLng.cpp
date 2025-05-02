@@ -39,11 +39,12 @@ void DisplayLatLngInfo(bool* afficherDepuisMemoire) {
     bool lngValide = (lng.ent != 0 || lng.dec != 0);
     bool timeStampValide = ts.length() > 0;
 
-    if (latValide && lngValide && timeStampValide) {
+    // if (latValide && lngValide && timeStampValide) {
+    if (latValide && lngValide ) {
         EEPROM.begin(EEPROM_SIZE);
         writeFloatGnss(ADDR_LATITUDE, lat);
         writeFloatGnss(ADDR_LONGITUDE, lng);
-        writeFixedString(ADDR_TIMESTAMP, ts, 20);
+        // writeFixedString(ADDR_TIMESTAMP, ts, 20);
         EEPROM.commit();
         Serial.println("Coordonnées et timeStamp enregistrés en EEPROM !");
 

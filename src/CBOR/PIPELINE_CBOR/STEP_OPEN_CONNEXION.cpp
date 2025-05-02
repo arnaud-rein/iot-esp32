@@ -5,7 +5,7 @@ ATCommandTask taskCBOR_OPEN_CONNEXION("AT+CAOPEN=0,0,\"TCP\"," + (String) PINGGY
 void STEP_OPEN_CONNEXION_FUNCTION(){
 
     if(chrono(100)) {
-        Serial.println("[STEP_OPEN_CONNEXION] init");
+        Serial.println("[STEP_OPEN_CONNEXION] init ########################################INIT INIT ");
         if(!taskCBOR_OPEN_CONNEXION.isFinished){
             machineCBOR.updateATState(taskCBOR_OPEN_CONNEXION); 
             currentTaskCBOR = &taskCBOR_OPEN_CONNEXION;

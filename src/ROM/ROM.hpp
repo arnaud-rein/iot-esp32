@@ -36,4 +36,7 @@ String readFixedString(int addr, int maxLength);
 
 void afficherCoordonneesDepuisEEPROM(bool* afficher);
 
+
+String getCoordonneesDepuisEEPROM();
+
 #endif // EEPROM_GNSS_HPP

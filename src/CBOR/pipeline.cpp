@@ -50,6 +50,7 @@ unsigned long periodX = millis();
 
 //FONCION appelé depuis le main.cpp pour envoyer un message au serveur node.js distant 
 void sendMessageCBOR(const char* dataMessage){
+    // Serial.println("dans SENDMessageCBOR---------------------------->");
     repeatMachine(); 
     if((millis() - periodX) > 500){
         if(endCBOR){
