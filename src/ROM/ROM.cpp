@@ -84,7 +84,9 @@ String getCoordonneesDepuisEEPROM() {
   String latitude = String(lat.ent) + "." + String(lat.dec);
   String longitude = String(lng.ent) + "." + String(lng.dec);
  
-  String result = "{name:'test', position{Latitude: " + latitude + ", Longitude: " + longitude + "}}";
+  // String result = "{name:'test', position{Latitude: " + latitude + ", Longitude: " + longitude + "}}";
+  String result = "{\"name\":\"test\",\"position\":{\"latitude\":" + latitude + ",\"longitude\":" + longitude + "}}";
+
   // Serial.println("result qui va être convert en CBOR Latitude: " + result);
   return result;
 }

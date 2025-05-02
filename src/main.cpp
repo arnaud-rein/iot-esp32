@@ -93,9 +93,9 @@ void everyX(){
                         // Send_AT("AT+CGNSPWR=0");
                         // Serial.print(Send_AT("AT+CGNSPWR?"));
       }
-        // sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
+        sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
         
-        sendMessageCBOR("{\"name\":\"ARNAUD\",\"position\":{\"latitude\":666.85,\"longitude\":3.35}}");
+        // sendMessageCBOR("{\"name\":\"ARNAUD\",\"position\":{\"latitude\":666.85,\"longitude\":3.35}}");
     }
   }
 }
