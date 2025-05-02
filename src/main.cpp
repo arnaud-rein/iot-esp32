@@ -95,7 +95,7 @@ void everyX(){
       }
         // sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
         
-        sendMessageCBOR("{\"name\":\"Evian\",\"position\":{\"latitude\":666.85,\"longitude\":3.35}}");
+        sendMessageCBOR("{\"name\":\"ARNAUD\",\"position\":{\"latitude\":666.85,\"longitude\":3.35}}");
     }
   }
 }

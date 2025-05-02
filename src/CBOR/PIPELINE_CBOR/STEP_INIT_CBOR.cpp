@@ -4,10 +4,19 @@ void  STEP_INIT_CBOR_FUNCTION(const char* dataMessage){
     if(chrono(100)) {
         Serial.println("[STEP_INIT_CBOR] ");
         const char* message = dataMessage;
-        json j = message;
+        // json j = message;
+        json j = json::parse(message); // ✅
 
         // 2. Convertir en CBOR
         cborDataPipeline= json::to_cbor(j);
+         // 🔍 LOG HEXA CBOR
+         Serial.println("[CBOR DUMP]");
+         for (uint8_t b : cborDataPipeline) {
+             if (b < 16) Serial.print("0");
+             Serial.print(b, HEX);
+             Serial.print(" ");
+         }
+         Serial.println(); // fin de ligne
         // Serial.print("cborDataPipeline ==> "); 
         // Serial.println(String(cborDataPipeline));
         Serial.println("+++++++++++++++++ cborDataPipeline.size() +++++++++++++++++++++++++");
