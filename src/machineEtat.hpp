@@ -40,5 +40,4 @@ public:
 };
 
 bool analyzeResponse(const String& response, const String& expected);
-
 #endif

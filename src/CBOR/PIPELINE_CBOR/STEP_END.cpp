@@ -6,5 +6,6 @@ void STEP_END_FUNCTION(){
         Serial.println("[STEP_END] ");
         Serial.println("#######################################################END CBOR############################################");
         endCBOR = false; 
+        END_CBOR_SEND = true; 
     }
 }
