@@ -44,6 +44,7 @@ void DisplayLatLngInfo(bool* afficherDepuisMemoire) {
         EEPROM.begin(EEPROM_SIZE);
         writeFloatGnss(ADDR_LATITUDE, lat);
         writeFloatGnss(ADDR_LONGITUDE, lng);
+        // writeFloatGnss( ADDR_SIM_ID, lng);
         // writeFixedString(ADDR_TIMESTAMP, ts, 20);
         EEPROM.commit();
         Serial.println("Coordonnées et timeStamp enregistrés en EEPROM !");

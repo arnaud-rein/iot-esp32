@@ -9,6 +9,7 @@
 #include "./GNSS/DisplayLatLng.hpp"
 #include <EEPROM.h>
 #include "PIPELINE_GLOBAL.hpp"
+#include "./ROM/ROM.hpp"
 // #include "./SEND/pipeline.hpp"
 
 #define EEPROM_SIZE 256  // 
@@ -20,8 +21,10 @@
 bool oneRun = true; 
 
 
+
 unsigned long periodA; 
 unsigned long periodB; 
+unsigned long period10min; 
 
 
 // 🔹 Fonction pour écrire une String
@@ -55,11 +58,7 @@ String readStringFromEEPROM(int addrOffset) {
 }
 
 
-void everyX(){
-  // sendMessageCBOR("Test du refactor");
-  // sendMessageCBOR("DEUXIEME TACHE");
-  // sendMessageCBOR("test");
-  // Serial.println("dans le every");
+void coordPipeline(){
   if((millis() - periodA) > 3000){
     if(oneRun){
 
@@ -90,13 +89,27 @@ void everyX(){
         Serial.println("--");
         periodB = millis();
         // Serial.print("PWR?   ==>   "); 
-                        // Send_AT("AT+CGNSPWR=0");
+                        // Send_AT("AT+CGNSPWR=0");  
                         // Serial.print(Send_AT("AT+CGNSPWR?"));
       }
         sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
         
         // sendMessageCBOR("{\"name\":\"ARNAUD\",\"position\":{\"latitude\":666.85,\"longitude\":3.35}}");
     }
+  }
+}
+
+void everyX(){
+  // sendMessageCBOR("Test du refactor");
+  // sendMessageCBOR("DEUXIEME TACHE");
+  // sendMessageCBOR("test");
+  // Serial.println("dans le every");
+
+  if((millis() - period10min) > 300000){
+    premierTour = true; 
+  }
+  if(premierTour){
+    coordPipeline();
   }
 }
 
@@ -107,8 +120,11 @@ void setup() {
   reboot_SIM7080G();
   Serial.println("Around the World"); // CTRL + ALT + S
   // setup_CATM1();
+  resetSimIdEEPROM(); // 👈 Appelle une seule fois
+  writeEspIdIfNotSet();
   periodA = millis();
   periodB = millis(); 
+  period10min = millis();
 }
 
 void loop() {

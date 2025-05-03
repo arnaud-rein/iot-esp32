@@ -39,4 +39,8 @@ void afficherCoordonneesDepuisEEPROM(bool* afficher);
 
 String getCoordonneesDepuisEEPROM();
 
+void writeEspIdIfNotSet();
+
+void resetSimIdEEPROM();
+
 #endif // EEPROM_GNSS_HPP

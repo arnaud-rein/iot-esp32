@@ -120,7 +120,7 @@ Gnss getGnssResponse(){
     gnss.timeStamp = getTimeStamp(gnssData);
     gnss.coordonnees = coord; 
     gnss.altitude = getAltitude(gnssData);
-
+    
     return  gnss;
 }
 
