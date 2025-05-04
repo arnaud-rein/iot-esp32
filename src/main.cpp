@@ -10,6 +10,7 @@
 #include <EEPROM.h>
 #include "PIPELINE_GLOBAL.hpp"
 #include "./ROM/ROM.hpp"
+#include "./receiveCBOR.hpp"
 // #include "./SEND/pipeline.hpp"
 
 #define EEPROM_SIZE 256  // 
@@ -131,12 +132,20 @@ void everyX(){
   // sendMessageCBOR("test");
   // Serial.println("dans le every");
 
-  if((millis() - period10min) > 300000){
-    premierTour = true; 
-  }
-  if(premierTour){
-    coordPipeline();
-  }
+  // if((millis() - period10min) > 300000){
+  //   premierTour = true; 
+  // }
+  // if(premierTour){
+  //   coordPipeline();
+  // }
+
+  if (START_PIPELINE) {
+    Serial.println("🚀 Pipeline actif");
+    // Ton code ici...
+}
+
+// Optionnel : lecture CBOR périodique
+lireEtDecoderCBOR();
 }
 
 void setup() {
@@ -144,36 +153,57 @@ void setup() {
   // turn_on_SIM7080G();
   Serial.begin(115200); // init port uart // on a aussi un port uart qui pointe vers notre pc
   reboot_SIM7080G();
-  EEPROM.begin(EEPROM_SIZE);
+//   EEPROM.begin(EEPROM_SIZE);
   Serial.println("Around the World"); // CTRL + ALT + S
-  // setup_CATM1();
-  // resetSimIdEEPROM(); // 👈 Appelle une seule fois
-  // String gsn2 = Send_AT("AT+GSN");
-  // writeSimIdToEEPROM(String(gsn2));
+  setup_CATM1();
+//   // resetSimIdEEPROM(); // 👈 Appelle une seule fois
+//   // String gsn2 = Send_AT("AT+GSN");
+//   // writeSimIdToEEPROM(String(gsn2));
 
-  String gsnRaw = Send_AT("AT+GSN");
-String imei = parseGSNResponse(gsnRaw);
+//   String gsnRaw = Send_AT("AT+GSN");
+// String imei = parseGSNResponse(gsnRaw);
 
-if (imei.length() > 0) {
-  writeSimIdToEEPROM(imei);
-} else {
-  Serial.println("❌ IMEI vide ou non trouvé");
+// if (imei.length() > 0) {
+//   writeSimIdToEEPROM(imei);
+// } else {
+//   Serial.println("❌ IMEI vide ou non trouvé");
+// }
+
+
+// //   String maSimId = "123456789012345";
+// // writeSimIdToEEPROM(maSimId);
+
+//   Serial.println("information 0 à 10 ");
+//   // Serial.println(readStringFromEEPROM(100));
+
+//   Serial.println(readFixedString(100, 15));
+
+
+// Connexion à ton serveur tunnelé via Pinggy
+// delay(2000);
+Send_AT("AT+CAOPEN=0,0,\"TCP\"," + (String) PINGGY_LINK + "," + (String) PINGGY_PORT); // Remplace par le port réel affiché
+// delay(2000);
+// Lire 100 octets depuis la connexion
+Send_AT("AT+CARECV=0,100");
+
+for (int i = 0; i < 5; i++) {
+  Send_AT("AT+CARECV=0,100");
+  delay(3000);
 }
 
 
-//   String maSimId = "123456789012345";
-// writeSimIdToEEPROM(maSimId);
+  
 
-  Serial.println("information 0 à 10 ");
-  // Serial.println(readStringFromEEPROM(100));
 
-  Serial.println(readFixedString(100, 15));
 
   
  
-  periodA = millis();
-  periodB = millis(); 
-  period10min = millis();
+  // periodA = millis();
+  // periodB = millis(); 
+  // period10min = millis();
+
+
+
 }
 
 void loop() {
