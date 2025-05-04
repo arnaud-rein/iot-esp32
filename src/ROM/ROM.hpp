@@ -6,7 +6,7 @@
 #include "./../GNSS/SIM7080G_GNSS.hpp"
 
 // Taille de l'EEPROM utilisée
-#define EEPROM_SIZE 64
+#define EEPROM_SIZE 256
 
 // Adresses fixes pour les données
 #define ADDR_SIM_ID     0
@@ -42,5 +42,7 @@ String getCoordonneesDepuisEEPROM();
 void writeEspIdIfNotSet();
 
 void resetSimIdEEPROM();
+
+void writeSimIdToEEPROM(const String& simId);
 
 #endif // EEPROM_GNSS_HPP

@@ -99,6 +99,32 @@ void coordPipeline(){
   }
 }
 
+String parseGSNResponse(const String& rawResponse) {
+  Serial.println("🔍 Réponse AT brute reçue :");
+  Serial.println("[" + rawResponse + "]");
+
+  // On coupe la réponse en lignes
+  int start = 0;
+  int end = rawResponse.indexOf('\n');
+  while (end != -1) {
+    String line = rawResponse.substring(start, end);
+    line.trim(); // Supprime les \r, \n, espaces
+
+    // L'IMEI est normalement une ligne de 15 chiffres
+    if (line.length() == 15 && line.toInt() != 0) {
+      Serial.println("✅ IMEI détecté : " + line);
+      return line;
+    }
+
+    start = end + 1;
+    end = rawResponse.indexOf('\n', start);
+  }
+
+  Serial.println("⚠️ Aucune ligne contenant un IMEI trouvée.");
+  return "";
+}
+
+
 void everyX(){
   // sendMessageCBOR("Test du refactor");
   // sendMessageCBOR("DEUXIEME TACHE");
@@ -118,10 +144,33 @@ void setup() {
   // turn_on_SIM7080G();
   Serial.begin(115200); // init port uart // on a aussi un port uart qui pointe vers notre pc
   reboot_SIM7080G();
+  EEPROM.begin(EEPROM_SIZE);
   Serial.println("Around the World"); // CTRL + ALT + S
   // setup_CATM1();
-  resetSimIdEEPROM(); // 👈 Appelle une seule fois
-  writeEspIdIfNotSet();
+  // resetSimIdEEPROM(); // 👈 Appelle une seule fois
+  // String gsn2 = Send_AT("AT+GSN");
+  // writeSimIdToEEPROM(String(gsn2));
+
+  String gsnRaw = Send_AT("AT+GSN");
+String imei = parseGSNResponse(gsnRaw);
+
+if (imei.length() > 0) {
+  writeSimIdToEEPROM(imei);
+} else {
+  Serial.println("❌ IMEI vide ou non trouvé");
+}
+
+
+//   String maSimId = "123456789012345";
+// writeSimIdToEEPROM(maSimId);
+
+  Serial.println("information 0 à 10 ");
+  // Serial.println(readStringFromEEPROM(100));
+
+  Serial.println(readFixedString(100, 15));
+
+  
+ 
   periodA = millis();
   periodB = millis(); 
   period10min = millis();

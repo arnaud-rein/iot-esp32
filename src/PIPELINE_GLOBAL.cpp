@@ -62,7 +62,7 @@ void pipelineSwitchGlobal(){
         //         oneRun = false; 
         //     }else{
         //         Serial.println("++++++++++++++++++++++++++++++++++++++++++++DANS STEP_SEND_4G++++++++++++++++++++++++++++++++++++++");
-                sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
+                // sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
         //         sendMessageCBOR("test");
         //     }
             

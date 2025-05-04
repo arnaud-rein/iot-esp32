@@ -31,12 +31,33 @@ Float_gnss readFloatGnss(int addr) {
 
 // 🔹 Écriture d’une String à taille fixe (tronquée si trop longue)
 void writeFixedString(int addr, const String& str, int maxLength) {
+  Serial.println("dans writeFixedString");
+  Serial.println("String str : " + str);
+  Serial.println("addr : " + String(addr) + "longeur de la chaîn maxLength : " + String(maxLength) + " str.length : " + str.length());
+
   for (int i = 0; i < maxLength; i++) {
+    Serial.print("------------------> BOUCLE FOR : ");
+    
+      Serial.println(str[i]);
+    
+  }
+  for (int i = 0; i < maxLength; i++) {
+    Serial.println("++++++++++++ BOUCLE FOR");
     if (i < str.length()) {
       EEPROM.write(addr + i, str[i]);
+      Serial.print("EEPROM.write: ");
+      Serial.println(str[i]);
     } else {
       EEPROM.write(addr + i, 0);  // padding avec \0
     }
+  }
+
+  for (int i = 0; i < maxLength; i++) {
+    char c = EEPROM.read(addr + i);
+    Serial.print("Byte ");
+    Serial.print(i);
+    Serial.print(" : ");
+    Serial.println((int)c); // Affiche la valeur numérique
   }
 }
 
@@ -51,17 +72,23 @@ void writeFixedString(int addr, const String& str, int maxLength) {
 // }
 String readFixedString(int addr, int maxLength) {
   char buf[maxLength + 1];
+  // Serial.println("---------dans readFixedString ############");
   for (int i = 0; i < maxLength; i++) {
     char c = EEPROM.read(addr + i);
     // Remplace les caractères non imprimables par un point
-    buf[i] = (c >= 32 && c <= 126) ? c : '.';
+    buf[i] = (c >= 1 && c <= 150) ? c : '.';
   }
   buf[maxLength] = '\0';
   return String(buf);
 }
 
 void writeSimIdToEEPROM(const String& simId) {
-  writeFixedString(ADDR_SIM_ID, simId, 10);
+  Serial.println("simdId String : " + simId + " longeur de la chaîne : " + String(simId.length()));
+  if (simId.length() > 30) {
+    Serial.println("[Chaîne trop longue]");
+    return;
+  }
+  writeFixedString(100, simId, 15);
   EEPROM.commit(); // Ne pas oublier pour persister dans la flash
 }
 
@@ -137,6 +164,7 @@ String getCoordonneesDepuisEEPROM() {
   String simId = readSimIdFromEEPROM();
   Float_gnss lat = readFloatGnss(ADDR_LATITUDE);
   Float_gnss lng = readFloatGnss(ADDR_LONGITUDE);
+  String imei = readFixedString(100, 15);
   // Serial.println("---------voici le message SIM ID =================================");
   // Serial.println(simId);
   // Serial.println("------------------------------------------------> result < -------------------------");
@@ -149,7 +177,7 @@ String getCoordonneesDepuisEEPROM() {
  
   // String result = "{name:'test', position{Latitude: " + latitude + ", Longitude: " + longitude + "}}";
   // String result = "{\"name\":\"test\",\"position\":{\"latitude\":" + latitude + ",\"longitude\":" + longitude + "}}";
-  String result = "{\"name\":\"" + simId + "\",\"position\":{\"latitude\":" + latitude + ",\"longitude\":" + longitude + "}}";
+  String result = "{\"name\":\"" + imei + "\",\"position\":{\"latitude\":" + latitude + ",\"longitude\":" + longitude + "}}";
   // Serial.println(result);
 
   // Serial.println("result qui va être convert en CBOR Latitude: " + result);

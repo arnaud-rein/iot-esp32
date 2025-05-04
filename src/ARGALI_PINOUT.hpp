@@ -2,8 +2,8 @@
 #define PIN_PWRKEY 7
 #define Sim7080G Serial1
 #define Sim7080G_BAUDRATE 57600
-#define PINGGY_LINK "rnwxy-92-184-123-144.a.free.pinggy.link"
-#define PINGGY_PORT 46145
+#define PINGGY_LINK "rnfye-92-184-121-26.a.free.pinggy.link"
+#define PINGGY_PORT 44251
 // #define PERIODE_CBOR 1UL
 
 
