@@ -77,8 +77,8 @@ void coordPipeline(){
     if(!oneRun){
       // Serial.println("++++++++++++++++++++++++++++++++++++++++++++DANS STEP_SEND_4G++++++++++++++++++++++++++++++++++++++");
       // sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
-      
       if((millis() - periodB) > 3000){
+        // Send_AT("AT+CGNSPWR=0");
         Serial.println("--");
         Serial.println("--");
         Serial.println("");
@@ -132,20 +132,20 @@ void everyX(){
   // sendMessageCBOR("test");
   // Serial.println("dans le every");
 
-  // if((millis() - period10min) > 300000){
-  //   premierTour = true; 
-  // }
-  // if(premierTour){
-  //   coordPipeline();
-  // }
+  if((millis() - period10min) > 300000){
+    premierTour = true; 
+  }
+  if(premierTour){
+    coordPipeline();
+  }
 
-  if (START_PIPELINE) {
-    Serial.println("🚀 Pipeline actif");
-    // Ton code ici...
-}
+//   if (START_PIPELINE) {
+//     Serial.println("🚀 Pipeline actif");
+//     // Ton code ici...
+// }
 
 // Optionnel : lecture CBOR périodique
-lireEtDecoderCBOR();
+// lireEtDecoderCBOR();
 }
 
 void setup() {
@@ -155,7 +155,7 @@ void setup() {
   reboot_SIM7080G();
 //   EEPROM.begin(EEPROM_SIZE);
   Serial.println("Around the World"); // CTRL + ALT + S
-  setup_CATM1();
+  // setup_CATM1();
 //   // resetSimIdEEPROM(); // 👈 Appelle une seule fois
 //   // String gsn2 = Send_AT("AT+GSN");
 //   // writeSimIdToEEPROM(String(gsn2));
@@ -181,15 +181,18 @@ void setup() {
 
 // Connexion à ton serveur tunnelé via Pinggy
 // delay(2000);
-Send_AT("AT+CAOPEN=0,0,\"TCP\"," + (String) PINGGY_LINK + "," + (String) PINGGY_PORT); // Remplace par le port réel affiché
-// delay(2000);
-// Lire 100 octets depuis la connexion
-Send_AT("AT+CARECV=0,100");
+// Send_AT("AT+CAOPEN=0,0,\"TCP\"," + (String) PINGGY_LINK + "," + (String) PINGGY_PORT); // Remplace par le port réel affiché
+// // delay(2000);
+// // Lire 100 octets depuis la connexion
+// Send_AT("AT+CARECV=0,100");
 
-for (int i = 0; i < 5; i++) {
-  Send_AT("AT+CARECV=0,100");
-  delay(3000);
-}
+// for (int i = 0; i < 10; i++) {
+//   // Send_AT("AT+CARECV=0,100");
+//     lireEtDecoderCBOR();
+
+//   // lireEtDecoderCBOR();
+//   delay(3000);
+// }
 
 
   
@@ -198,9 +201,9 @@ for (int i = 0; i < 5; i++) {
 
   
  
-  // periodA = millis();
-  // periodB = millis(); 
-  // period10min = millis();
+  periodA = millis();
+  periodB = millis(); 
+  period10min = millis();
 
 
 

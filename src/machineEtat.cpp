@@ -119,7 +119,7 @@
             return false;
         }
 
-        Serial.println("Dans analyzeResponse {{{{{{{{{{{{{{}}}}}}}}}}}}}}");
+        // Serial.println("Dans analyzeResponse {{{{{{{{{{{{{{}}}}}}}}}}}}}}");
 
         return false;
     }
