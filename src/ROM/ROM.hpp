@@ -26,8 +26,8 @@ uint32_t readUInt32(int addr);
 void writeFloatGnss(int addr, const Float_gnss& f);
 
 // 🔹 Lecture d’un Float_gnss depuis l'EEPROM
-Float_gnss readFloatGnss(int addr);
-// Float_gnss readFloatGnss(int addr, boolean lat);
+// Float_gnss readFloatGnss(int addr);
+Float_gnss readFloatGnss(int addr, boolean lat);
 
 // 🔹 Écriture d’une String à taille fixe
 void writeFixedString(int addr, const String& str, int maxLength);
