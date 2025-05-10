@@ -31,9 +31,10 @@ void  STEP_INIT_CBOR_FUNCTION(const char* dataMessage){
 
         // Recréer l'objet taskCBOR_CASEND
         if (taskCBOR_CASEND != nullptr) {
+            Serial.println("----------- taskCBOR_SEND ----------------------|||||||||||"); 
             delete taskCBOR_CASEND;  // Si l'objet existait déjà, le supprimer pour éviter une fuite mémoire
         }
-        taskCBOR_CASEND = new ATCommandTask(newCommand, ">", 15, 3000);
+        taskCBOR_CASEND = new ATCommandTask(newCommand, ">", 15, 5000);
 
         currentStepCBOR = STEP_VERIFIER_CONNEXION;
         PERIODE_CBOR = millis();

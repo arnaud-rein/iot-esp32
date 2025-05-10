@@ -6,6 +6,12 @@ void STEP_OPEN_CONNEXION_FUNCTION(){
 
     if(chrono(100)) {
         Serial.println("[STEP_OPEN_CONNEXION] init ########################################INIT INIT ");
+
+        if(resetCommandOPEN_CONNEXION){
+            taskCBOR_OPEN_CONNEXION.state = IDLE;
+            taskCBOR_OPEN_CONNEXION.isFinished = false;
+            resetCommandOPEN_CONNEXION = false; 
+        }
         if(!taskCBOR_OPEN_CONNEXION.isFinished){
             machineCBOR.updateATState(taskCBOR_OPEN_CONNEXION); 
             currentTaskCBOR = &taskCBOR_OPEN_CONNEXION;

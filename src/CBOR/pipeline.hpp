@@ -26,6 +26,7 @@ enum PipelineCBOR{
         STEP_END
 
 };
+
     //FONCTION de test pour envoyer un message minimal 
     void sendMinimalCBORMessage();
 
@@ -57,4 +58,8 @@ enum PipelineCBOR{
     extern MachineEtat machineCBOR; 
     extern ATCommandTask* currentTaskCBOR;
     extern boolean endCBOR;
+    extern boolean resetCommandCEREG;
+    extern boolean resetCommandOPEN_CONNEXION;
+    extern boolean resetCommandCLOSE_CONNEXION;
+    extern String command;
 #endif

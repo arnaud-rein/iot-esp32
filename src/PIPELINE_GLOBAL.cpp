@@ -45,7 +45,7 @@ void pipelineSwitchGlobal(){
             }else{
                 machine2.updateATState(gnssPowerOff);
                 if(!gnssPowerOff.isFinished){
-                    currentStepGLOBAL = STEP_END_GLOBAL;
+                    currentStepGLOBAL = STEP_SEND_4G;
                     END_CBOR_SEND = false; 
                     Serial.println("end cbor send" + String(END_CBOR_SEND));
                     Send_AT("AT+CGNSPWR=0");
@@ -56,21 +56,39 @@ void pipelineSwitchGlobal(){
           }
             break;
 
-        // case STEP_SEND_4G:
-        //     if(oneRun){
-        //         setup_CATM1();
-        //         oneRun = false; 
-        //     }else{
-        //         Serial.println("++++++++++++++++++++++++++++++++++++++++++++DANS STEP_SEND_4G++++++++++++++++++++++++++++++++++++++");
-                // sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
-        //         sendMessageCBOR("test");
-        //     }
+        case STEP_SEND_4G:
+            if(oneRun){
+              setup_CATM1();
+              oneRun = false; 
+            //   Serial.println("++++++++++++++++++++++++++++++++++++++++++++ Après avoir mis oneRun sur false ++++++++++++++++++++++++++++++++++++++");
+            }
             
-        //     if(END_CBOR_SEND){
+            if(!oneRun){
+              // sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
+              if((millis() - periodB) > 3000){
+                // Serial.println("++++++++++++++++++++++++++++++++++++++++++++ !oneRun ++++++++++++++++++++++++++++++++++++++");
+                // Send_AT("AT+CGNSPWR=0");
+                // Serial.println("--");
+                // Serial.println("--");
+                // Serial.println("");
+                // Serial.print("[");
+                // Serial.print(millis());
+                // Serial.print("ms]" );
+                // Serial.println("");
+                // Serial.println("--");
+                // Serial.println("--");
+                periodB = millis();
+                // Serial.print("PWR?   ==>   "); 
+                                // Send_AT("AT+CGNSPWR=0");  
+                                // Serial.print(Send_AT("AT+CGNSPWR?"));
+              }
+                sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
+                
+                // sendMessageCBOR("{\"name\":\"ARNAUD\",\"position\":{\"latitude\":666.85,\"longitude\":3.35}}");
+            }
 
-        //         currentStepGLOBAL = STEP_END_GLOBAL; 
-        //     }
-        //     break;
+
+            break;
         
         case STEP_END_GLOBAL:
             // Serial.println("END----------------->");

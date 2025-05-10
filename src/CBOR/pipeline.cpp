@@ -7,6 +7,10 @@ MachineEtat machineCBOR;
 String command;
 ATCommandTask* taskCBOR_CASEND = nullptr;
 boolean endCBOR = true;
+boolean resetCommandCEREG = false;
+boolean resetCommandOPEN_CONNEXION = false;
+boolean resetCommandCLOSE_CONNEXION = false;
+
 ATCommandTask* currentTaskCBOR = nullptr;
 
 //PIPELINE 
@@ -50,10 +54,10 @@ unsigned long periodX = millis();
 
 //FONCION appelé depuis le main.cpp pour envoyer un message au serveur node.js distant 
 void sendMessageCBOR(const char* dataMessage){
-    // Serial.println("dans SENDMessageCBOR---------------------------->");
     repeatMachine(); 
     if((millis() - periodX) > 500){
         if(endCBOR){
+            // Serial.println("dans SENDMessageCBOR---------------------------->");
             pipelineSwitchCBOR(dataMessage);
         }
         periodX = millis();

@@ -19,4 +19,8 @@ enum PipelineGLOBAL{
     STEP_END_GLOBAL
 
 };
+
+extern PipelineGLOBAL currentStepGLOBAL;
+extern bool afficherDepuisMemoire;
+
 void pipelineSwitchGlobal();

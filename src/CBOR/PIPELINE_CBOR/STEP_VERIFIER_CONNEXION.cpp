@@ -6,6 +6,11 @@ void STEP_VERIFIER_CONNEXION_FUNCTION(){
     
     if(chrono(100)) {
         Serial.println("[STEP_VERIFIER_CONNEXION] init iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+        if(resetCommandCEREG){
+            taskCBOR_CEREG.state = IDLE;
+            taskCBOR_CEREG.isFinished = false;
+            resetCommandCEREG = false; 
+        }
         if(!taskCBOR_CEREG.isFinished){
             machineCBOR.updateATState(taskCBOR_CEREG); 
             currentTaskCBOR = &taskCBOR_CEREG;

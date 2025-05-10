@@ -11,6 +11,7 @@
 #include "PIPELINE_GLOBAL.hpp"
 #include "./ROM/ROM.hpp"
 #include "./receiveCBOR.hpp"
+#include "./RECEIVE_FROM_SERVEUR_TCP/RECEIVE.hpp"
 // #include "./SEND/pipeline.hpp"
 
 #define EEPROM_SIZE 256  // 
@@ -19,29 +20,17 @@
 // MachineEtat machine2; // Instance de la machine d’état
 // bool afficherDepuisMemoire = true;
 // bool* ptrAfficherMemoire = &afficherDepuisMemoire;
-bool oneRun = true; 
+// bool oneRun = true; 
 
 
 
 unsigned long periodA; 
-unsigned long periodB; 
 unsigned long period10min; 
+unsigned long period100000; 
+unsigned long period10000; 
 
 
-// 🔹 Fonction pour écrire une String
-void writeStringToEEPROM(int addrOffset, const String &str) {
-  int len = str.length();
-  if (len + 1 + addrOffset > EEPROM_SIZE) {
-    Serial.println("Erreur : chaîne trop longue pour l'EEPROM !");
-    return;
-  }
 
-  EEPROM.write(addrOffset, len); // on écrit la longueur d'abord
-  for (int i = 0; i < len; i++) {
-    EEPROM.write(addrOffset + 1 + i, str[i]); // caractères un par un
-  }
-  EEPROM.commit(); // Sauvegarde dans la flash
-}
 
 // 🔹 Fonction pour lire une String
 String readStringFromEEPROM(int addrOffset) {
@@ -60,44 +49,18 @@ String readStringFromEEPROM(int addrOffset) {
 
 
 void coordPipeline(){
-  if((millis() - periodA) > 3000){
+  if((millis() - periodA) > 1000){
     if(oneRun){
-
+      // Serial.println("dans coordPipeline    ===    ---");
       pipelineSwitchGlobal();
     }
-   
+    
     periodA = millis(); 
   }
-  if(STEP_4G_TEST){
-    if(oneRun){
-      setup_CATM1();
-      oneRun = false; 
-    }
-    
-    if(!oneRun){
-      // Serial.println("++++++++++++++++++++++++++++++++++++++++++++DANS STEP_SEND_4G++++++++++++++++++++++++++++++++++++++");
-      // sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
-      if((millis() - periodB) > 3000){
-        // Send_AT("AT+CGNSPWR=0");
-        Serial.println("--");
-        Serial.println("--");
-        Serial.println("");
-        Serial.print("[");
-        Serial.print(millis());
-        Serial.print("ms]" );
-        Serial.println("");
-        Serial.println("--");
-        Serial.println("--");
-        periodB = millis();
-        // Serial.print("PWR?   ==>   "); 
-                        // Send_AT("AT+CGNSPWR=0");  
-                        // Serial.print(Send_AT("AT+CGNSPWR?"));
-      }
-        sendMessageCBOR(getCoordonneesDepuisEEPROM().c_str());
-        
-        // sendMessageCBOR("{\"name\":\"ARNAUD\",\"position\":{\"latitude\":666.85,\"longitude\":3.35}}");
-    }
+  if(!oneRun){
+    pipelineSwitchGlobal();
   }
+  
 }
 
 String parseGSNResponse(const String& rawResponse) {
@@ -132,11 +95,45 @@ void everyX(){
   // sendMessageCBOR("test");
   // Serial.println("dans le every");
 
-  if((millis() - period10min) > 300000){
+  if((millis() - period10min) > 80000){
+    // Serial.println(getCoordonneesDepuisEEPROM());
     premierTour = true; 
+    oneRun = true;
+    currentStepGLOBAL = STEP_INIT_GLOBAL; 
+    afficherDepuisMemoire = false;
+    endCBOR = true; 
+    Send_AT("AT+CGNSPWR=1");
+    currentStepCBOR = STEP_INIT_CBOR;
+    taskCBOR_CASEND = nullptr;
+    currentTaskCBOR = nullptr;
+    command = "";
+    resetCommandOPEN_CONNEXION = true; 
+    resetCommandCEREG = true; 
+    resetCommandCLOSE_CONNEXION = true; 
+
+    // DEFINITION DES VARIABLES INDISPENSABLE AU BON FONCTIONNEMENT DE CETTE PIPELINE
+  cborDataPipeline.clear();
+    period10min = millis(); 
   }
+  // if((millis() - period100000) > 150000){
+  //   receive();
+  // }
   if(premierTour){
     coordPipeline();
+    // period100000 = millis();
+  }
+
+  if((millis() - period10000) > 10000){
+    Serial.println("--");
+    Serial.println("--");
+    Serial.println("");
+    Serial.print("[");
+    Serial.print(millis());
+    Serial.print("ms]" );
+    Serial.println("");
+    Serial.println("--");
+    Serial.println("--");
+    period10000 = millis();
   }
 
 //   if (START_PIPELINE) {
@@ -174,7 +171,7 @@ void setup() {
 // // writeSimIdToEEPROM(maSimId);
 
 //   Serial.println("information 0 à 10 ");
-//   // Serial.println(readStringFromEEPROM(100));
+    
 
 //   Serial.println(readFixedString(100, 15));
 
@@ -204,6 +201,7 @@ void setup() {
   periodA = millis();
   periodB = millis(); 
   period10min = millis();
+  period10000 = millis();
 
 
 

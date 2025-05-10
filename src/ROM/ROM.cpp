@@ -29,6 +29,19 @@ Float_gnss readFloatGnss(int addr) {
   return f;
 }
 
+// Float_gnss readFloatGnss(int addr, boolean lat) {
+//   Float_gnss f;
+//   if(lat){
+//     f.ent = EEPROM.read(addr);
+//     f.dec = readUInt32(addr + 3);
+//     return f;
+//   }else{
+//     f.ent = EEPROM.read(addr);
+//     f.dec = readUInt32(addr + 2);
+//     return f;
+//   }
+// }
+
 // 🔹 Écriture d’une String à taille fixe (tronquée si trop longue)
 void writeFixedString(int addr, const String& str, int maxLength) {
   Serial.println("dans writeFixedString");
@@ -159,7 +172,7 @@ void afficherCoordonneesDepuisEEPROM(bool* afficher) {
 
 
 String getCoordonneesDepuisEEPROM() {
-  EEPROM.begin(EEPROM_SIZE);
+  // EEPROM.begin(EEPROM_SIZE);
 
   String simId = readSimIdFromEEPROM();
   Float_gnss lat = readFloatGnss(ADDR_LATITUDE);
