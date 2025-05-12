@@ -95,7 +95,7 @@ void everyX(){
   // sendMessageCBOR("test");
   // Serial.println("dans le every");
 
-  if((millis() - period10min) > 80000){
+  if((millis() - period10min) > 200000){
     // Serial.println(getCoordonneesDepuisEEPROM());
     premierTour = true; 
     oneRun = true;
@@ -115,12 +115,43 @@ void everyX(){
   cborDataPipeline.clear();
     period10min = millis(); 
   }
+
+//   if((millis() - period10min) > 60000){
+//     // Connexion à ton serveur tunnelé via Pinggy
+//     setup_CATM1();
+
+//     Send_AT("AT+CAOPEN=0,0,\"TCP\"," + (String) PINGGY_LINK + "," + (String) PINGGY_PORT); // Remplace par le port réel affiché
+//     delay(500);
+// // delay(2000);
+// // Lire 100 octets depuis la connexion
+//     // Send_AT("AT+CARECV=0,100");
+
+//     for (int i = 0; i < 5; i++) {
+//       lireEtDecoderCBOR(); 
+//       delay(3000);
+//     }
+//   }
   // if((millis() - period100000) > 150000){
   //   receive();
   // }
   if(premierTour){
     coordPipeline();
+    period10min = millis();
     // period100000 = millis();
+
+    // setup_CATM1();
+
+//     Send_AT("AT+CAOPEN=0,0,\"TCP\"," + (String) PINGGY_LINK + "," + (String) PINGGY_PORT); // Remplace par le port réel affiché
+//     delay(500);
+// // delay(2000);
+// // Lire 100 octets depuis la connexion
+//     // Send_AT("AT+CARECV=0,100");
+
+//     for (int i = 0; i < 5; i++) {
+//       lireEtDecoderCBOR(); 
+//       delay(3000);
+//     }
+    
   }
 
   if((millis() - period10000) > 10000){
