@@ -2,7 +2,7 @@
 
 
 PipelineGLOBAL currentStepGLOBAL = STEP_INIT_GLOBAL; 
-ATCommandTask gnssPowerOn("AT+CGNSPWR=1", "OK", 3, 2000); // Commande d’activation GNSS
+ATCommandTask gnssPowerOn("AT+CGNSPWR=1", "OK", 6, 4000); // Commande d’activation GNSS
 ATCommandTask gnssPowerOff("AT+CGNSPWR=0", "OK", 3, 2000); // Commande d’activation GNSS
 MachineEtat machine2; // Instance de la machine d’état
 bool afficherDepuisMemoire = false;
@@ -24,13 +24,26 @@ void pipelineSwitchGlobal(){
 
         case STEP_GNSS:
         if (!gnssPowerOn.isFinished) {
-            Serial.println("----------------gnssPowerOn------------->");
-            machine2.updateATState(gnssPowerOn);
-            // Send_AT("AT+CGNSMOD=1,1,1,1,1", 500);
-            // Serial.println(Send_AT("ATI", 500));
-            // Send_AT("AT+CGNSTST=1", 500);  // Active la sortie NMEA sur le port série
-            
-          } else {
+          Serial.println("----------------gnssPowerOn------------->");
+          machine2.updateATState(gnssPowerOn);
+          // Send_AT("AT+CGNSMOD=1,1,1,1,1", 500);
+          // Serial.println(Send_AT("ATI", 500));
+          // Send_AT("AT+CGNSTST=1", 500);  // Active la sortie NMEA sur le port série
+          
+        } else {
+            if((millis() - periodGNSS) > 40000){
+              Send_AT("AT+CGNSTST=0");
+              Send_AT("AT+CGNSPWR=0");
+              delay(1500);
+              Send_AT("AT+CGNSHOT=0");  // cold
+              delay(500);
+              Send_AT("AT+CGNSPWR=1");
+              delay(1500);
+              Send_AT("AT+CGNSTST=1");
+              
+              restartPipeline();
+              
+            }
             
             // Serial.println("[INFO] GNSS activé ou erreur atteinte.");
             Serial.println("-----------------GNSSINF--------------"); 

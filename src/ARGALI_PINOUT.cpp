@@ -2,6 +2,10 @@
 
 unsigned long PERIODE_CBOR = 123UL;  // définition et initialisation
 unsigned long periodB = 123UL;  // définition et initialisation
+unsigned long period100000= 123UL;  // définition et initialisation
+unsigned long period10min = 123UL;   // définition et initialisation
+unsigned long periodA = 123UL;   // définition et initialisation
+unsigned long periodGNSS = 123UL;   // définition et initialisation
   bool END_CBOR_SEND = false;
   bool STEP_4G_TEST = false;
   bool premierTour = true;

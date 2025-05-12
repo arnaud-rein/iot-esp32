@@ -40,9 +40,13 @@ void afficherCoordonneesDepuisEEPROM(bool* afficher);
 
 String getCoordonneesDepuisEEPROM();
 
+void writeIMEI(); 
+
 void writeEspIdIfNotSet();
 
 void resetSimIdEEPROM();
+
+String parseGSNResponse(const String& rawResponse);
 
 void writeSimIdToEEPROM(const String& simId);
 

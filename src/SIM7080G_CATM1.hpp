@@ -12,9 +12,10 @@ void setup_CATM1();
 void loop_CATM1();
 
 
-// void csqNumber(String dataLTE);
 // void cnactNumber(String dataLTE);
 String findSelect(String data, String nameStart, int numberPassAfterNameStart, String symbolToSelectStart, String symbolToEnd);
+
+void period10000function();
 
 #endif
 

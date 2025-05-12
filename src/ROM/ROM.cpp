@@ -105,6 +105,8 @@ void writeSimIdToEEPROM(const String& simId) {
   EEPROM.commit(); // Ne pas oublier pour persister dans la flash
 }
 
+
+
 String readSimIdFromEEPROM() {
   return readFixedString(ADDR_SIM_ID, 10);
 }
@@ -145,6 +147,42 @@ void resetSimIdEEPROM() {
     EEPROM.write(ADDR_SIM_ID + i, 0);
   }
   EEPROM.commit();
+}
+
+String parseGSNResponse(const String& rawResponse) {
+  Serial.println("🔍 Réponse AT brute reçue :");
+  Serial.println("[" + rawResponse + "]");
+
+  // On coupe la réponse en lignes
+  int start = 0;
+  int end = rawResponse.indexOf('\n');
+  while (end != -1) {
+    String line = rawResponse.substring(start, end);
+    line.trim(); // Supprime les \r, \n, espaces
+
+    // L'IMEI est normalement une ligne de 15 chiffres
+    if (line.length() == 15 && line.toInt() != 0) {
+      Serial.println("✅ IMEI détecté : " + line);
+      return line;
+    }
+
+    start = end + 1;
+    end = rawResponse.indexOf('\n', start);
+  }
+
+  Serial.println("⚠️ Aucune ligne contenant un IMEI trouvée.");
+  return "";
+}
+
+void writeIMEI(){
+  String gsnRaw = Send_AT("AT+GSN");
+  String imei = parseGSNResponse(gsnRaw);
+
+  if (imei.length() > 0) {
+    writeSimIdToEEPROM(imei);
+  } else {
+    Serial.println("❌ IMEI vide ou non trouvé");
+  }
 }
 
 

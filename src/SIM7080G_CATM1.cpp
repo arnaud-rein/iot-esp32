@@ -64,40 +64,21 @@ void loop_CATM1() // vérifie que c'est bien connecté via la connexion = 5
 }
 
 
-// int csqNumber(String dataLTE){
-//     int lengthEnd = dataLTE.length(); 
-//       int indexStartCSQ = dataLTE.indexOf("+CSQ:", 0);
-//       Serial.print("indexStartCSQ : ");
-//       Serial.println((String) indexStartCSQ);
+void period10000function(){
+    if((millis() - period100000) > 10000){
+       Serial.println("--");
+       Serial.println("--");
+       Serial.println("");
+       Serial.print("[");
+       Serial.print(millis());
+       Serial.print("ms]" );
+       Serial.println("");
+       Serial.println("--");
+       Serial.println("--");
+       period100000 = millis();
+     }
+}
 
-//       int indexAfterCSQ = indexStartCSQ + 6; 
-
-//       Serial.print("indexAfterCsq  : ");
-//       Serial.println((String) indexAfterCSQ);
-
-
-//       int virgule = dataLTE.indexOf(",", indexAfterCSQ);
-
-//       Serial.print("virgule  : ");
-//       Serial.println((String) virgule);
-      
-
-//       String numberEnt = dataLTE.substring(indexAfterCSQ, virgule);
-//       int numberEndAfterVirgule = dataLTE.indexOf(" ", virgule + 1);
-//       String numberDec = dataLTE.substring(virgule + 1, numberEndAfterVirgule);
-//       Serial.print("number ent  : ");
-//       Serial.println(numberEnt);
-//       Serial.print("number dec  : ");
-//       Serial.println(numberDec);
-
-//       Float_gnss flt; 
-//       flt.ent = numberEnt.toInt();
-//       flt.dec = numberDec.toInt();
-//       Serial.println((String) flt.ent + "," + flt.dec);
-
-   
-
-// }
 
 
 String findSelect(String data, String nameStart, int numberPassAfterNameStart, String symbolToSelectStart, String symbolToEnd){

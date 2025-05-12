@@ -35,8 +35,10 @@ void DisplayLatLngInfo(bool* afficherDepuisMemoire) {
     Float_gnss lng = responsegGnss.coordonnees.longitude;
     String ts = responsegGnss.timeStamp;
 
-    bool latValide = ((lat.ent != 0 && lat.ent != 47) || lat.dec != 0);
-    bool lngValide = ((lng.ent != 0 && lng.ent != 4) || lng.dec != 0);
+    bool latValide = ((lat.ent != 0 ) || lat.dec != 0);
+    bool lngValide = ((lng.ent != 0 ) || lng.dec != 0);
+    // bool latValide = ((lat.ent != 0 && lat.ent != 47) || lat.dec != 0);
+    // bool lngValide = ((lng.ent != 0 && lng.ent != 4) || lng.dec != 0);
     bool timeStampValide = ts.length() > 0;
 
     // if (latValide && lngValide ) {

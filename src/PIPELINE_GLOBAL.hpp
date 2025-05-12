@@ -1,3 +1,4 @@
+#pragma once
 
 
 
@@ -9,6 +10,7 @@
 #include "./ROM/ROM.hpp"
 #include "./GNSS/DisplayLatLng.hpp"
 #include "./CBOR/pipeline.hpp"
+#include "./EVERY/EVERY.hpp"
 
 
 
