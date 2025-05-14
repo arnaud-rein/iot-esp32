@@ -5,19 +5,12 @@ void STEP_CLOSE_CONNEXION_FUNCTION()
     if (chrono(100))
     {
         Serial.println("[STEP_CLOSE_CONNEXION] init");
-        if (resetCommandCLOSE_CONNEXION)
-        {
-        }
-        if (!taskCBOR_CLOSE.isFinished)
-        {
-            machineCBOR.updateATState(taskCBOR_CLOSE);
-        }
-        else
+
+        if (machineCBOR.updateATState(taskCBOR_CLOSE))
         {
             Serial.println("[STEP_CLOSE_CONNEXION] success");
             taskCBOR_CLOSE.state = IDLE;
             taskCBOR_CLOSE.isFinished = false;
-            resetCommandCLOSE_CONNEXION = false;
             currentStepCBOR = STEP_END;
         }
     }

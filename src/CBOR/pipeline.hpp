@@ -59,6 +59,5 @@ extern ATCommandTask *currentTaskCBOR;
 extern boolean endCBOR;
 extern boolean resetCommandCEREG;
 extern boolean resetCommandOPEN_CONNEXION;
-extern boolean resetCommandCLOSE_CONNEXION;
 extern String command;
 #endif

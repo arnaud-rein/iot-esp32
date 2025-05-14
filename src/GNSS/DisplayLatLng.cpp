@@ -65,11 +65,26 @@ void DisplayLatLngInfo(bool *afficherDepuisMemoire)
         MessageCoord msg;
         msg.data = result;
         msg.endCBOR = true;
-        if (listeCoordonnees.size() >= 5)
+        // if (listeCoordonnees.size() >= 5)
+        // {
+        //     listeCoordonnees.erase(listeCoordonnees.begin());
+        // }
+        // listeCoordonnees.push_back(msg);
+
+        if (nbCoordonnees >= MAX_COORDS)
         {
-            listeCoordonnees.erase(listeCoordonnees.begin());
+            // Décaler tous les éléments vers la gauche pour supprimer le plus ancien
+            for (int i = 1; i < nbCoordonnees; ++i)
+            {
+                listeCoordonnees[i - 1] = listeCoordonnees[i];
+            }
+            nbCoordonnees--;
         }
-        listeCoordonnees.push_back(msg);
+        if (nbCoordonnees < MAX_COORDS)
+        {
+            listeCoordonnees[nbCoordonnees] = msg;
+            nbCoordonnees++;
+        }
 
         *afficherDepuisMemoire = false; // ✅ Maintenant on peut passer en mode mémoire
     }

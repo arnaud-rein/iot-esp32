@@ -9,7 +9,6 @@ ATCommandTask *taskCBOR_CASEND = nullptr;
 boolean endCBOR = true;
 boolean resetCommandCEREG = false;
 boolean resetCommandOPEN_CONNEXION = false;
-boolean resetCommandCLOSE_CONNEXION = false;
 
 ATCommandTask *currentTaskCBOR = nullptr;
 

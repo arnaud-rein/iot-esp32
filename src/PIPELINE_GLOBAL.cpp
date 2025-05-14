@@ -28,7 +28,6 @@ void pipelineGlobal()
     Serial.println("===================================== STEP_END_GLOBAL =====================================");
     if ((millis() - period10min) > 10000)
     {
-      oneRun = true;
       endCBOR = true;
       currentStepGLOBAL = STEP_INIT_GLOBAL;
     }

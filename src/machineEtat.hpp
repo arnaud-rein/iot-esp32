@@ -30,6 +30,10 @@ struct ATCommandTask
     const unsigned long TIMEOUT;
     bool isFinished; // ⬅️ Ajout pour bloquer la réexécution
     String result;
+
+    // Ajout du callback d'erreur
+    void (*onErrorCallback)(ATCommandTask &task) = nullptr;
+
     ATCommandTask(String cmd, String expected, int maxRetries, unsigned long timeout);
 };
 

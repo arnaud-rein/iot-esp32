@@ -1,8 +1,8 @@
 #include "../../PIPELINE_GLOBAL.hpp"
 
-ATCommandTask gnssPowerOn("AT+CGNSPWR=1", "OK", 6, 4000); // Commande d’activation GNSS
-ATCommandTask gnssInf("AT+CGNSINF=?", "OK", 6, 4000);     // Commande d’activation GNSS
-ATCommandTask gnssPowerOff("AT+CGNSPWR=0", "OK", 3, 2000);
+ATCommandTask gnssPowerOnCommand("AT+CGNSPWR=1", "OK", 6, 4000); // Commande d’activation GNSS
+ATCommandTask gnssInfCommand("AT+CGNSINF=?", "OK", 6, 4000);     // Commande d’activation GNSS
+ATCommandTask gnssPowerOffCommand("AT+CGNSPWR=0", "OK", 3, 2000);
 
 MachineEtat machineGNSS; // Instance de la machine d’état
 bool afficherDepuisMemoire = false;
@@ -18,6 +18,13 @@ enum StepGNSSState
 
 StepGNSSState gnssStepState = GNSS_POWER_ON;
 
+// Définition de la fonction callback à part
+void gnssErrorPowerOn(ATCommandTask &task)
+{
+    Serial.println("[ERROR] Problème avec " + String(task.command));
+    Serial.println("[ERROR] Aucun gestionnaire d'erreur spécifique");
+}
+
 void step_gnss_function()
 {
     Serial.println("[STEP_GNSS]");
@@ -27,10 +34,13 @@ void step_gnss_function()
     {
 
         // Serial.println("okPowerOn = " + String(okPowerOn));
-        if (machineGNSS.updateATState(gnssPowerOn))
+        // TO DO : a remettre dans bool
+        gnssPowerOnCommand.onErrorCallback = gnssErrorPowerOn;
+        machineGNSS.updateATState(gnssPowerOnCommand);
+        if (machineGNSS.updateATState(gnssPowerOnCommand))
         {
             Serial.println("------>GNSS_POWER_ON[OK]");
-            gnssPowerOn.state = IDLE;
+            gnssPowerOnCommand.state = IDLE;
             gnssStepState = GNSS_INFO;
         }
         break;
@@ -46,12 +56,12 @@ void step_gnss_function()
         String response = Send_AT("AT+CGNSINF", 2000);
         Serial.println(response);
 
-        if (listeCoordonnees.size() < 5 && (millis() - periodGNSS) > 3000)
+        if (nbCoordonnees < 5 && (millis() - periodGNSS) > 3000)
         {
             periodGNSS = millis();
             DisplayLatLngInfo(&afficherDepuisMemoire);
         }
-        else if (listeCoordonnees.size() >= 5)
+        else if (nbCoordonnees >= 5)
         {
             Serial.println("Trop de messages dans la liste, on ne peut pas en ajouter d'autres");
             gnssStepState = GNSS_POWER_OFF;
@@ -61,11 +71,11 @@ void step_gnss_function()
 
     case GNSS_POWER_OFF:
     {
-        bool okPowerOff = machineGNSS.updateATState(gnssPowerOff);
+        bool okPowerOff = machineGNSS.updateATState(gnssPowerOffCommand);
         if (okPowerOff)
         {
             Serial.print("-->GNSS_POWER_OFF[OK]");
-            gnssPowerOff.state = IDLE;
+            gnssPowerOffCommand.state = IDLE;
             gnssStepState = GNSS_DONE;
         }
         break;

@@ -23,6 +23,7 @@ enum PipelineGLOBAL
 
 void step_gnss_function();
 extern PipelineGLOBAL currentStepGLOBAL;
+extern StepSend4GState currentStep4G;
 extern bool afficherDepuisMemoire;
 
 void pipelineGlobal();

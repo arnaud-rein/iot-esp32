@@ -3,7 +3,8 @@
 // Constructeur pour initialiser la structure ATCommandTask
 ATCommandTask::ATCommandTask(String cmd, String expected, int maxRetries, unsigned long timeout)
     : state(IDLE), command(cmd), expectedResponse(expected), responseBuffer(""), lastSendTime(0),
-      retryCount(0), MAX_RETRIES(maxRetries), TIMEOUT(timeout), isFinished(false), result("") {}
+      retryCount(0), MAX_RETRIES(maxRetries), TIMEOUT(timeout), isFinished(false), result(""),
+      onErrorCallback(nullptr) {}
 
 // Constructeur de la machine d'état
 MachineEtat::MachineEtat() {}
@@ -20,7 +21,6 @@ bool MachineEtat::updateATState(ATCommandTask &task)
         task.responseBuffer = "";
         task.state = SENDING;
         return false;
-        break;
 
     case SENDING:
         Serial.println("[SENDING] Envoi de : " + String(task.command));
@@ -28,7 +28,6 @@ bool MachineEtat::updateATState(ATCommandTask &task)
         task.lastSendTime = millis();
         task.state = WAITING_RESPONSE;
         return false;
-        break;
 
     case WAITING_RESPONSE:
 
@@ -51,7 +50,7 @@ bool MachineEtat::updateATState(ATCommandTask &task)
                 task.state = END;
                 Serial.println("[SUCCESS] Réponse valide pour " + String(task.command));
                 return true;
-                break; // Sortir immédiatement de la boucle while
+                // Sortir immédiatement de la boucle while
             }
         }
 
@@ -79,17 +78,32 @@ bool MachineEtat::updateATState(ATCommandTask &task)
             task.isFinished = true;
             return false; // TO DO : remplacer par isBlocked ou function qui reboot
         }
-        break;
 
     case ERROR:
         Serial.println("[ERROR] Problème avec " + String(task.command));
-        task.state = IDLE;
-        return false; // La tâche a eu
-        break;
+        if (task.onErrorCallback)
+        {
+            task.onErrorCallback(task); // Appel du callback spécifique à la commande
+        }
+        else
+        {
+            // Comportement par défaut si aucun callback n'est défini
+            Serial.println("[ERROR] Aucun gestionnaire d'erreur spécifique, retour à IDLE.");
+            task.state = IDLE;
+            task.retryCount = 0;
+            task.responseBuffer = "";
+            task.isFinished = false;
+        }
+        return false;
 
     case END:
         return true; // La tâche est terminée
-        break;
+
+    default:
+
+        Serial.println("[DEFAULT] État non reconnu pour " + String(task.command));
+        task.state = IDLE;
+        return false; // La tâche a eu un problème
     }
 }
 
