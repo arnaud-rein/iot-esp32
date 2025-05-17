@@ -1,24 +1,29 @@
 #include "ROM.hpp"
 // 🔹 Fonction pour écrire un uint32_t manuellement
-void writeUInt32(int addr, uint32_t val) {
-  for (int i = 0; i < 4; i++) {
+void writeUInt32(int addr, uint32_t val)
+{
+  for (int i = 0; i < 4; i++)
+  {
     EEPROM.write(addr + i, (val >> (8 * (3 - i))) & 0xFF);
   }
 }
 
 // 🔹 Fonction pour lire un uint32_t
-uint32_t readUInt32(int addr) {
+uint32_t readUInt32(int addr)
+{
   uint32_t val = 0;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; i++)
+  {
     val |= EEPROM.read(addr + i) << (8 * (3 - i));
   }
   return val;
 }
 
 // 🔹 Stockage d’un Float_gnss
-void writeFloatGnss(int addr, const Float_gnss& f) {
+void writeFloatGnss(int addr, const Float_gnss &f)
+{
   EEPROM.write(addr, f.ent);
-  writeUInt32(addr + 1, f.dec);
+  // writeUInt32(addr + 1, f.dec);
 }
 
 // 🔹 Lecture d’un Float_gnss
@@ -29,13 +34,17 @@ void writeFloatGnss(int addr, const Float_gnss& f) {
 //   return f;
 // }
 
-Float_gnss readFloatGnss(int addr, boolean lat) {
+Float_gnss readFloatGnss(int addr, boolean lat)
+{
   Float_gnss f;
-  if(lat){
+  if (lat)
+  {
     f.ent = EEPROM.read(addr);
     f.dec = readUInt32(addr + 3);
     return f;
-  }else{
+  }
+  else
+  {
     f.ent = EEPROM.read(addr);
     f.dec = readUInt32(addr + 2);
     return f;
@@ -43,29 +52,35 @@ Float_gnss readFloatGnss(int addr, boolean lat) {
 }
 
 // 🔹 Écriture d’une String à taille fixe (tronquée si trop longue)
-void writeFixedString(int addr, const String& str, int maxLength) {
+void writeFixedString(int addr, const String &str, int maxLength)
+{
   Serial.println("dans writeFixedString");
   Serial.println("String str : " + str);
   Serial.println("addr : " + String(addr) + "longeur de la chaîn maxLength : " + String(maxLength) + " str.length : " + str.length());
 
-  for (int i = 0; i < maxLength; i++) {
+  for (int i = 0; i < maxLength; i++)
+  {
     Serial.print("------------------> BOUCLE FOR : ");
-    
-      Serial.println(str[i]);
-    
+
+    Serial.println(str[i]);
   }
-  for (int i = 0; i < maxLength; i++) {
+  for (int i = 0; i < maxLength; i++)
+  {
     Serial.println("++++++++++++ BOUCLE FOR");
-    if (i < str.length()) {
+    if (i < str.length())
+    {
       EEPROM.write(addr + i, str[i]);
       Serial.print("EEPROM.write: ");
       Serial.println(str[i]);
-    } else {
-      EEPROM.write(addr + i, 0);  // padding avec \0
+    }
+    else
+    {
+      EEPROM.write(addr + i, 0); // padding avec \0
     }
   }
 
-  for (int i = 0; i < maxLength; i++) {
+  for (int i = 0; i < maxLength; i++)
+  {
     char c = EEPROM.read(addr + i);
     Serial.print("Byte ");
     Serial.print(i);
@@ -83,10 +98,12 @@ void writeFixedString(int addr, const String& str, int maxLength) {
 //   buf[maxLength] = '\0';
 //   return String(buf);
 // }
-String readFixedString(int addr, int maxLength) {
+String readFixedString(int addr, int maxLength)
+{
   char buf[maxLength + 1];
   // Serial.println("---------dans readFixedString ############");
-  for (int i = 0; i < maxLength; i++) {
+  for (int i = 0; i < maxLength; i++)
+  {
     char c = EEPROM.read(addr + i);
     // Remplace les caractères non imprimables par un point
     buf[i] = (c >= 1 && c <= 150) ? c : '.';
@@ -95,9 +112,11 @@ String readFixedString(int addr, int maxLength) {
   return String(buf);
 }
 
-void writeSimIdToEEPROM(const String& simId) {
+void writeSimIdToEEPROM(const String &simId)
+{
   Serial.println("simdId String : " + simId + " longeur de la chaîne : " + String(simId.length()));
-  if (simId.length() > 30) {
+  if (simId.length() > 30)
+  {
     Serial.println("[Chaîne trop longue]");
     return;
   }
@@ -105,27 +124,30 @@ void writeSimIdToEEPROM(const String& simId) {
   EEPROM.commit(); // Ne pas oublier pour persister dans la flash
 }
 
-
-
-String readSimIdFromEEPROM() {
+String readSimIdFromEEPROM()
+{
   return readFixedString(ADDR_SIM_ID, 10);
 }
 
-String getEsp32Id() {
+String getEsp32Id()
+{
   uint64_t chipid = ESP.getEfuseMac();
   char idBuffer[13]; // 12 caractères hex + '\0'
   sprintf(idBuffer, "%04X%08X", (uint16_t)(chipid >> 32), (uint32_t)chipid);
   return String(idBuffer);
 }
 
-void writeEspIdToEEPROM() {
+void writeEspIdToEEPROM()
+{
   String id = getEsp32Id();
   writeFixedString(ADDR_SIM_ID, id, 10); // 10 caractères max
-  EEPROM.commit(); // Important pour enregistrer
+  EEPROM.commit();                       // Important pour enregistrer
 }
 
-void writeEspIdIfNotSet() {
-  if (readFixedString(ADDR_SIM_ID, 10).length() == 0) {
+void writeEspIdIfNotSet()
+{
+  if (readFixedString(ADDR_SIM_ID, 10).length() == 0)
+  {
     writeEspIdToEEPROM();
   }
 }
@@ -134,34 +156,41 @@ void writeEspIdIfNotSet() {
 //   return readFixedString(ADDR_SIM_ID, 10);
 // }
 
-String readEspIdFromEEPROM() {
+String readEspIdFromEEPROM()
+{
   String id = readFixedString(ADDR_SIM_ID, 10);
-  if (id.length() == 0 || id.indexOf('.') != -1) {
+  if (id.length() == 0 || id.indexOf('.') != -1)
+  {
     return "UNKNOWN";
   }
   return id;
 }
 
-void resetSimIdEEPROM() {
-  for (int i = 0; i < 10; i++) {
+void resetSimIdEEPROM()
+{
+  for (int i = 0; i < 10; i++)
+  {
     EEPROM.write(ADDR_SIM_ID + i, 0);
   }
   EEPROM.commit();
 }
 
-String parseGSNResponse(const String& rawResponse) {
+String parseGSNResponse(const String &rawResponse)
+{
   Serial.println("🔍 Réponse AT brute reçue :");
   Serial.println("[" + rawResponse + "]");
 
   // On coupe la réponse en lignes
   int start = 0;
   int end = rawResponse.indexOf('\n');
-  while (end != -1) {
+  while (end != -1)
+  {
     String line = rawResponse.substring(start, end);
     line.trim(); // Supprime les \r, \n, espaces
 
     // L'IMEI est normalement une ligne de 15 chiffres
-    if (line.length() == 15 && line.toInt() != 0) {
+    if (line.length() == 15 && line.toInt() != 0)
+    {
       Serial.println("✅ IMEI détecté : " + line);
       return line;
     }
@@ -174,42 +203,51 @@ String parseGSNResponse(const String& rawResponse) {
   return "";
 }
 
-void writeIMEI(){
+void writeIMEI()
+{
   String gsnRaw = Send_AT("AT+GSN");
   String imei = parseGSNResponse(gsnRaw);
 
-  if (imei.length() > 0) {
+  if (imei.length() > 0)
+  {
     writeSimIdToEEPROM(imei);
-  } else {
+  }
+  else
+  {
     Serial.println("❌ IMEI vide ou non trouvé");
   }
 }
 
+void afficherCoordonneesDepuisEEPROM(bool *afficher)
+{
+  if (!afficher || !(*afficher))
+  {
+    return;
+  }
 
-void afficherCoordonneesDepuisEEPROM(bool* afficher) {
-    if (!afficher || !(*afficher)) {
-        return;
-    }
+  EEPROM.begin(EEPROM_SIZE);
 
-    EEPROM.begin(EEPROM_SIZE);
+  Float_gnss lat = readFloatGnss(ADDR_LATITUDE, true);
+  Float_gnss lng = readFloatGnss(ADDR_LONGITUDE, false);
+  String ts = readFixedString(ADDR_TIMESTAMP, 20);
 
-    Float_gnss lat = readFloatGnss(ADDR_LATITUDE, true);
-    Float_gnss lng = readFloatGnss(ADDR_LONGITUDE, false);
-    String ts = readFixedString(ADDR_TIMESTAMP, 20);
+  Serial.println("------ Coordonnées EEPROM ------");
+  Serial.print("Latitude : ");
+  Serial.print(lat.ent);
+  Serial.print(".");
+  Serial.println(lat.dec);
 
-    Serial.println("------ Coordonnées EEPROM ------");
-    Serial.print("Latitude : ");
-    Serial.print(lat.ent); Serial.print("."); Serial.println(lat.dec);
+  Serial.print("Longitude : ");
+  Serial.print(lng.ent);
+  Serial.print(".");
+  Serial.println(lng.dec);
 
-    Serial.print("Longitude : ");
-    Serial.print(lng.ent); Serial.print("."); Serial.println(lng.dec);
-
-    Serial.print("Horodatage : ");
-    Serial.println(ts);
+  Serial.print("Horodatage : ");
+  Serial.println(ts);
 }
 
-
-String getCoordonneesDepuisEEPROM() {
+String getCoordonneesDepuisEEPROM()
+{
   // EEPROM.begin(EEPROM_SIZE);
 
   String simId = readSimIdFromEEPROM();
@@ -225,7 +263,7 @@ String getCoordonneesDepuisEEPROM() {
   // Formatage avec précision
   String latitude = String(lat.ent) + "." + String(lat.dec);
   String longitude = String(lng.ent) + "." + String(lng.dec);
- 
+
   // String result = "{name:'test', position{Latitude: " + latitude + ", Longitude: " + longitude + "}}";
   // String result = "{\"name\":\"test\",\"position\":{\"latitude\":" + latitude + ",\"longitude\":" + longitude + "}}";
   String result = "{\"name\":\"" + imei + "\",\"position\":{\"latitude\":" + latitude + ",\"longitude\":" + longitude + "}}";
